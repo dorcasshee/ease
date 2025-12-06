@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct EaseApp: App {
@@ -13,5 +14,6 @@ struct EaseApp: App {
         WindowGroup {
             ContentView()
         }
+        .modelContainer(for: [Transaction.self, Payee.self, TransactionCategory.self])
     }
 }
