@@ -14,6 +14,17 @@ struct EaseApp: App {
         WindowGroup {
             ContentView()
         }
-        .modelContainer(for: [Transaction.self, Payee.self, TransactionCategory.self])
+        .modelContainer(for: [Transaction.self, Payee.self, TransactionCategory.self], onSetup: { result in
+            switch result {
+                case .success(let container):
+                    do {
+                        try TransactionCategory.seedDefaultCategories(in: container.mainContext)
+                    } catch {
+                        print("Error occurred while seeding data: \(error.localizedDescription)")
+                    }
+                case .failure(let error):
+                    print("Error creating container: \(error.localizedDescription)")
+            }
+        })
     }
 }

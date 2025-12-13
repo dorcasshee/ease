@@ -6,3 +6,11 @@
 //
 
 import Foundation
+import SwiftData
+
+@Observable class CategoryViewModel {
+    
+    func createCategory(context: ModelContext) {
+        
+    }
+}
