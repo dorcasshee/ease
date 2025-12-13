@@ -8,34 +8,52 @@
 import Foundation
 import SwiftData
 
-@Observable
-class TransactionViewModel {
+@Observable class TransactionViewModel {
     /*
-    This view model contains the following logic for transaction CRUD operations.
-    */
+     This view model contains the following logic for transaction CRUD operations.
+     */
     
-    private var context: ModelContext
     private var payeeViewModel: PayeeViewModel
+    var amount: Double = 0
+    var isSelected: Bool = false
+    var date: Date
+    var transactionType: TransactionType = .expense
+    var category: TransactionCategory? // amend later
+    var desc: String?
+    var payeeName: String = String()
+    var isRecurring: Bool = false
     
-    init(context: ModelContext) {
-        self.context = context
-        self.payeeViewModel = PayeeViewModel(context: context)
+    init() {
+        self.payeeViewModel = PayeeViewModel()
+        self.date = Date()
     }
     
-    func createTransaction(amount: Double, category: TransactionCategory, desc: String?, payeeName: String, date: Date, isRecurring: Bool) {
+    func createTransaction(context: ModelContext) {
         
-        let payee = payeeViewModel.getOrCreatePayee(name: payeeName)
+        let payee = payeeViewModel.getOrCreatePayee(context: context, name: payeeName)
         
-        let newTransaction = Transaction(amount: amount, category: category, desc: desc ?? String(), payee: payee, date: date, isRecurring: isRecurring)
+        let newTransaction = Transaction(amount: amount,
+                                         category: category ?? TransactionCategory(name: "", iconName: "", colorHex: "", isDefault: false),
+                                         desc: desc ?? String(),
+                                         payee: payee,
+                                         date: date,
+                                         isRecurring: isRecurring)
         
         context.insert(newTransaction)
     }
     
-    func updateTransaction() {
-        
+    func updateTransaction(context: ModelContext, item: Transaction) {
+        try? context.save()
     }
     
-    func deleteTransaction(item: Transaction) {
+    func deleteTransaction(context: ModelContext, item: Transaction) {
         context.delete(item)
     }
+}
+
+enum TransactionType: String, Identifiable {
+    case expense, income
+    var id: String { rawValue }
+    
+    static let allCases: [TransactionType] = [.expense, .income]
 }

@@ -14,13 +14,7 @@ class PayeeViewModel {
      This view model contains manages create, update, and delete operations for Payees.
      */
     
-    private var context: ModelContext
-    
-    init(context: ModelContext) {
-        self.context = context
-    }
-    
-    func getOrCreatePayee(name: String) -> Payee {
+    func getOrCreatePayee(context: ModelContext, name: String) -> Payee {
         //check database if payee exist
         let descriptor = FetchDescriptor<Payee>(predicate: #Predicate { $0.name == name })
         
