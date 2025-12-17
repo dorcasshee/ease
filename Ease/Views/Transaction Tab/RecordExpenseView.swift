@@ -32,16 +32,16 @@ struct RecordExpenseView: View {
                 }
             }
             
-            Text("new transaction")
-                .font(.subheadline)
+            Text("New Transaction")
+                .font(.headline).fontWeight(.regular)
             
-            TextField("0.00", value: $transactionVM.amount, format: .currency(code: "SGD")) // allow currency to change
+            TextField("$0.00", value: $transactionVM.amount, format: .currency(code: "SGD")) // allow currency to change
                 .font(.system(size: 50, weight: .bold))
                 .keyboardType(.decimalPad)
                 .multilineTextAlignment(.center)
                 .padding()
             
-            Picker("", selection: $transactionVM.category) {
+            Picker("Select transaction type", selection: $transactionVM.transactionType) { // expense, income, transfer, investment
                 ForEach(TransactionType.allCases) { type in
                     Text(type.rawValue.capitalized)
                         .tag(type)
@@ -50,11 +50,15 @@ struct RecordExpenseView: View {
             .pickerStyle(.segmented)
             .padding(.horizontal)
             .padding(.bottom)
+            .frame(width: 250)
+            
             
             
             
             Button {
                 // dismiss sheet
+                transactionVM.createTransaction(context: context)
+                dismiss()
             } label: {
                 Text("Save")
                     .font(.headline)

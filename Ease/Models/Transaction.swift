@@ -17,7 +17,7 @@ class Transaction {
     @Relationship var category: TransactionCategory
     @Relationship var payee: Payee?
     
-    init(amount: Double, category: TransactionCategory, desc: String?, payee: Payee, date: Date, isRecurring: Bool) {
+    init(amount: Double, category: TransactionCategory, desc: String?, payee: Payee?, date: Date, isRecurring: Bool = false) {
         self.amount = amount
         self.category = category
         self.desc = desc
