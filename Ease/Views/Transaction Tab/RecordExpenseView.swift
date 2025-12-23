@@ -15,22 +15,7 @@ struct RecordExpenseView: View {
     
     var body: some View {
         VStack {
-            HStack {
-                Spacer()
-                
-                Button {
-                    dismiss()
-                } label: {
-                    Image(systemName: "x.circle.fill")
-                        .resizable()
-                        .scaledToFit()
-                        .symbolRenderingMode(.palette)
-                        .foregroundStyle(Color(.systemGray2), Color(.secondarySystemBackground))
-                        .frame(width: 32)
-                        .padding(.trailing)
-                        
-                }
-            }
+            DismissButton()
             
             Text("New Transaction")
                 .font(.headline).fontWeight(.regular)
@@ -52,7 +37,84 @@ struct RecordExpenseView: View {
             .padding(.bottom)
             .frame(width: 250)
             
-            
+            VStack(spacing: 20) {
+                CustomDivider()
+                
+                
+                Button {
+                    transactionVM.showSheet = true
+                } label: {
+                    HStack {
+                        Label("Category:", systemImage: "circle.grid.2x2")
+                            .foregroundStyle(.eOrange)
+                            .font(.headline)
+                        
+                        Spacer()
+                    }
+                    
+                }
+                .sheet(isPresented: $transactionVM.showSheet) {
+                    CategorySheetView()
+                }
+                
+                CustomDivider()
+                
+                HStack {
+                    Label("Paid To:", systemImage: "person")
+                        .font(.headline)
+                        .foregroundStyle(.accent)
+                    
+                    TextField(text: $transactionVM.payeeName) {
+                    }
+                }
+                
+                CustomDivider()
+                
+                HStack {
+                    Image(systemName: "line.3.horizontal")
+                    
+                    TextField("Description", text: $transactionVM.desc) {}
+                        .font(.headline).fontWeight(.regular)
+                }
+                
+                CustomDivider()
+                
+                HStack {
+                    Image(systemName: "calendar")
+                    
+                    ZStack {
+                        DatePicker("", selection: $transactionVM.date, displayedComponents: .date)
+                            .labelsHidden()
+                            .blendMode(.destinationOver)
+                        
+                        Text(transactionVM.date, format: .dateTime.weekday(.wide).day().month(.wide))
+                            .font(.headline).fontWeight(.regular)
+                            .allowsHitTesting(false)
+                    }
+                    .contentShape(Rectangle())
+                    
+                    Spacer()
+                    
+                    Button {
+                        transactionVM.decrementDate()
+                    } label: {
+                        Image(systemName: "chevron.left")
+                            .foregroundStyle(.eBlack)
+                    }
+                    .padding(.trailing)
+                    
+                    Button {
+                        transactionVM.incrementDate()
+                    } label: {
+                        Image(systemName: "chevron.right")
+                            .foregroundStyle(.eBlack)
+                    }
+                }
+                
+                CustomDivider()                
+            }
+            .padding(.horizontal, 40)
+            .padding(.bottom)
             
             
             Button {
@@ -71,6 +133,7 @@ struct RecordExpenseView: View {
                     }
                     
             }
+            .padding(.bottom, 5)
             
             Button {
                 // Create another transaction
@@ -89,7 +152,41 @@ struct RecordExpenseView: View {
             
             Spacer()
         }
-        
+        .alert(transactionVM.valError?.errorTitle ?? "Error", isPresented: $transactionVM.showError) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(transactionVM.valError?.errorMessage ?? "An unexpected error has occurred. Please try again.")
+        }
+    }
+}
+
+struct CustomDivider: View {
+    var body: some View {
+        Divider()
+            .opacity(0.8)
+    }
+}
+
+struct DismissButton: View {
+    @Environment(\.dismiss) private var dismiss
+    
+    var body: some View {
+        HStack {
+            Spacer()
+            
+            Button {
+                dismiss()
+            } label: {
+                Image(systemName: "x.circle.fill")
+                    .resizable()
+                    .scaledToFit()
+                    .symbolRenderingMode(.palette)
+                    .foregroundStyle(Color(.systemGray2), Color(.secondarySystemBackground))
+                    .frame(width: 32)
+                    .padding(.trailing)
+                
+            }
+        }
     }
 }
 

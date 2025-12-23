@@ -1,0 +1,12 @@
+# Xcode user-specific settings
+xcuserdata/
+
+# macOS
+.DS_Store
+
+# Build artifacts
+build/
+DerivedData/
+
+# Swift Package Manager
+.swiftpm
