@@ -34,4 +34,13 @@ import SwiftData
     func sortedSubCategories(cat: [TransactionCategory]) -> [TransactionCategory] {
         cat.sorted(by: { $0.name < $1.name })
     }
+    
+    func getDefaultCategory(for transactionType: TransactionType, context: ModelContext) throws -> TransactionCategory {
+        let descriptor = FetchDescriptor<TransactionCategory> ( predicate: #Predicate { $0.isDefault == true })
+        let defaultCategories = try context.fetch(descriptor)
+        
+        guard let category = defaultCategories.first(where: { $0.transactionType == transactionType }) else { throw AppError.noDefaultCategory }
+        
+        return category
+    }
 }

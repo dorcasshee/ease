@@ -12,7 +12,10 @@ struct RecordExpenseView: View {
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
     
+    @Query private var categories: [TransactionCategory]
+    
     @State private var transactionVM = TransactionViewModel()
+    @State private var categoryVM = CategoryViewModel()
     
     var body: some View {
         VStack {
@@ -112,6 +115,14 @@ struct RecordExpenseView: View {
             Button("OK", role: .cancel) {}
         } message: {
             Text(transactionVM.valError?.errorMessage ?? "An unexpected error has occurred. Please try again.")
+        }
+        .onAppear {
+            if transactionVM.category == nil {
+                transactionVM.category = try? categoryVM.getDefaultCategory(for: transactionVM.transactionType, context: context)
+            }
+        }
+        .onChange(of: transactionVM.transactionType) { _, newValue in
+            transactionVM.category = try? categoryVM.getDefaultCategory(for: newValue, context: context)
         }
     }
 }

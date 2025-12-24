@@ -26,7 +26,7 @@ import SwiftData
     var selectedCategory: TransactionCategory?
     
     var showError: Bool = false
-    var valError: ValidationError?
+    var valError: AppError?
     
     var showSheet: Bool = false
     
@@ -40,8 +40,8 @@ import SwiftData
         valError = nil
         
         do {
-            guard let category = category else { throw ValidationError.missingCategory } // missingCategory error
-            guard amount > 0 else { throw ValidationError.invalidAmount } // invalid amount error
+            guard let category = category else { throw AppError.missingCategory }
+            guard amount > 0 else { throw AppError.invalidAmount }
             
             let trimmedName = payeeName.trimmingCharacters(in: .whitespacesAndNewlines)
             let payee = trimmedName.isEmpty ? nil : payeeViewModel.getOrCreatePayee(context: context, name: trimmedName)
@@ -55,7 +55,7 @@ import SwiftData
             
             context.insert(newTransaction)
             try context.save()
-        } catch let error as ValidationError {
+        } catch let error as AppError {
             valError = error
             showError = true
         } catch {
@@ -69,8 +69,8 @@ import SwiftData
         valError = nil
         
         do {
-            guard let category = category else { throw ValidationError.missingCategory } // missingCategory error
-            guard amount > 0 else { throw ValidationError.invalidAmount } // invalid amount error
+            guard let category = category else { throw AppError.missingCategory } // missingCategory error
+            guard amount > 0 else { throw AppError.invalidAmount } // invalid amount error
             
             let trimmedName = payeeName.trimmingCharacters(in: .whitespacesAndNewlines)
             
@@ -82,7 +82,7 @@ import SwiftData
             item.isRecurring = isRecurring
             
             try context.save()
-        } catch let error as ValidationError {
+        } catch let error as AppError {
             valError = error
             showError = true
         } catch {
@@ -115,24 +115,4 @@ enum TransactionType: String, Identifiable, Codable {
     var id: String { rawValue }
     
     static let allCases: [TransactionType] = [.expense, .income]
-}
-
-enum ValidationError: Error {
-    case missingCategory, invalidAmount, unexpectedError
-    
-    var errorTitle: String {
-        switch self {
-            case .missingCategory: return "Missing Category"
-            case .invalidAmount: return "Invalid Amount"
-            case .unexpectedError: return "Unexpected Error"
-        }
-    }
-    
-    var errorMessage: String {
-        switch self {
-            case .missingCategory: return "Please select a category."
-            case .invalidAmount: return "Amount should be more than $0.00."
-            case .unexpectedError: return "An unexpected error occurred while saving this transaction. Please try again."
-        }
-    }
 }
