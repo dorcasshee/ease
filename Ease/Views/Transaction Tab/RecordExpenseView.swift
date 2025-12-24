@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct RecordExpenseView: View {
     @Environment(\.modelContext) private var context
@@ -111,11 +112,10 @@ struct RecordExpenseView: View {
                     }
                 }
                 
-                CustomDivider()                
+                CustomDivider()
             }
-            .padding(.horizontal, 40)
-            .padding(.bottom)
-            
+            .padding(.top, 10)
+            .padding(.bottom, 25)
             
             Button {
                 // dismiss sheet
@@ -136,7 +136,8 @@ struct RecordExpenseView: View {
             .padding(.bottom, 5)
             
             Button {
-                // Create another transaction
+                transactionVM.createTransaction(context: context)
+                //trigger sheet again
             } label: {
                 Text("Save & Add Another")
                     .font(.headline)
@@ -152,6 +153,8 @@ struct RecordExpenseView: View {
             
             Spacer()
         }
+        .padding(.horizontal, 30)
+        .padding(.vertical)
         .alert(transactionVM.valError?.errorTitle ?? "Error", isPresented: $transactionVM.showError) {
             Button("OK", role: .cancel) {}
         } message: {
@@ -163,7 +166,7 @@ struct RecordExpenseView: View {
 struct CustomDivider: View {
     var body: some View {
         Divider()
-            .opacity(0.8)
+            .opacity(0.75)
     }
 }
 
@@ -183,8 +186,6 @@ struct DismissButton: View {
                     .symbolRenderingMode(.palette)
                     .foregroundStyle(Color(.systemGray2), Color(.secondarySystemBackground))
                     .frame(width: 32)
-                    .padding(.trailing)
-                
             }
         }
     }
@@ -192,4 +193,5 @@ struct DismissButton: View {
 
 #Preview {
     RecordExpenseView()
+        .modelContainer(.preview)
 }

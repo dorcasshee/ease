@@ -9,11 +9,16 @@ import Foundation
 
 struct Strings {
     struct Colors {
-        static let eOrangeLightHex: String = "#EF8048"
-        static let eOrangeDarkHex: String = "#C86634"
-        static let eBlueLightHex: String = "#3A2EE0"
-        static let eBlueDarkHex: String = "#2B1FD1"
-        static let ePinkLightHex: String = "#ED718B"
-        static let ePinkDarkHex: String = "#C85A71"
+        static let eOrangeLightHex: String = "EF7C43"
+        static let eOrangeDarkHex: String = "C86634"
+        
+        static let eBlueLightHex: String = "0838A1"
+        static let eBlueDarkHex: String = "2B1FD1"
+        
+        static let ePinkLightHex: String = "E9496C"
+        static let ePinkDarkHex: String = "C85A71"
+        
+        static let eBlack: String = "000000"
+        static let eWhite: String = "FFFFFF"
     }
 }
