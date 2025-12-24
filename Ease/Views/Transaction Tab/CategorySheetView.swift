@@ -13,7 +13,7 @@ struct CategorySheetView: View {
     @Query private var categories: [TransactionCategory]
     
     @State private var categoryVM = CategoryViewModel()
-    
+    var transactionVM: TransactionViewModel
     
     let columns: [GridItem] = Array(repeating: GridItem(.flexible()), count: 4)
     
@@ -30,12 +30,13 @@ struct CategorySheetView: View {
             // search bar
             
             ScrollView {
-                ForEach(categoryVM.getParentCategories(categories: categories)) { parent in
+                ForEach(categoryVM.getParentCategories(categories: categories, transactionType: transactionVM.transactionType)) { parent in
                     Section {
                         LazyVGrid(columns: columns) {
                             ForEach(categoryVM.sortedSubCategories(cat: parent.subCategories)) { cat in
                                 Button {
-                                    
+                                    transactionVM.category = cat
+                                    dismiss()
                                 } label: {
                                     CategoryButtonView(imageName: cat.iconName, categoryName: cat.name, hex: cat.colorHex)
                                         .padding(.bottom, 5)
@@ -69,7 +70,7 @@ struct CategorySheetView: View {
 }
 
 #Preview {
-    CategorySheetView()
+    CategorySheetView(transactionVM: TransactionViewModel())
         .modelContainer(.preview)
 }
 

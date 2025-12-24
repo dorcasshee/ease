@@ -14,8 +14,8 @@ import SwiftData
         
     }
     
-    func getParentCategories(categories: [TransactionCategory]) -> [TransactionCategory] {
-        categories.filter { $0.isParent }
+    func getParentCategories(categories: [TransactionCategory], transactionType: TransactionType) -> [TransactionCategory] {
+        categories.filter { $0.isParent && $0.transactionType == transactionType }
             .sorted(by: { $0.name < $1.name })
     }
     

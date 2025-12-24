@@ -110,7 +110,7 @@ import SwiftData
 
 
 // MARK: Enums
-enum TransactionType: String, Identifiable {
+enum TransactionType: String, Identifiable, Codable {
     case expense, income
     var id: String { rawValue }
     

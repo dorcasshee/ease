@@ -41,21 +41,22 @@ struct RecordExpenseView: View {
             VStack(spacing: 20) {
                 CustomDivider()
                 
-                
                 Button {
                     transactionVM.showSheet = true
                 } label: {
                     HStack {
                         Label("Category:", systemImage: "circle.grid.2x2")
-                            .foregroundStyle(.eOrange)
-                            .font(.headline)
+                            .foregroundStyle(.eBlack)
+                        
+                        Label(transactionVM.category?.name ?? "", systemImage: transactionVM.category?.iconName ?? "")
+                            .foregroundStyle(Color(hex: transactionVM.category?.colorHex ?? Strings.Colors.eBlack))
                         
                         Spacer()
                     }
-                    
+                    .font(.headline)
                 }
                 .sheet(isPresented: $transactionVM.showSheet) {
-                    CategorySheetView()
+                    CategorySheetView(transactionVM: transactionVM)
                 }
                 
                 CustomDivider()
@@ -63,7 +64,7 @@ struct RecordExpenseView: View {
                 HStack {
                     Label("Paid To:", systemImage: "person")
                         .font(.headline)
-                        .foregroundStyle(.accent)
+                        .foregroundStyle(.eBlack)
                     
                     TextField(text: $transactionVM.payeeName) {
                     }
@@ -80,37 +81,7 @@ struct RecordExpenseView: View {
                 
                 CustomDivider()
                 
-                HStack {
-                    Image(systemName: "calendar")
-                    
-                    ZStack {
-                        DatePicker("", selection: $transactionVM.date, displayedComponents: .date)
-                            .labelsHidden()
-                            .blendMode(.destinationOver)
-                        
-                        Text(transactionVM.date, format: .dateTime.weekday(.wide).day().month(.wide))
-                            .font(.headline).fontWeight(.regular)
-                            .allowsHitTesting(false)
-                    }
-                    .contentShape(Rectangle())
-                    
-                    Spacer()
-                    
-                    Button {
-                        transactionVM.decrementDate()
-                    } label: {
-                        Image(systemName: "chevron.left")
-                            .foregroundStyle(.eBlack)
-                    }
-                    .padding(.trailing)
-                    
-                    Button {
-                        transactionVM.incrementDate()
-                    } label: {
-                        Image(systemName: "chevron.right")
-                            .foregroundStyle(.eBlack)
-                    }
-                }
+                DateRowView(transactionVM: transactionVM)
                 
                 CustomDivider()
             }
@@ -122,33 +93,15 @@ struct RecordExpenseView: View {
                 transactionVM.createTransaction(context: context)
                 dismiss()
             } label: {
-                Text("Save")
-                    .font(.headline)
-                    .foregroundStyle(.white)
-                    .padding(.vertical, 10)
-                    .padding(.horizontal, 76)
-                    .background {
-                        Capsule()
-                            .foregroundStyle(.black)
-                    }
+                BlackButtonView(text: "Save", horizontalPadding: 80)
                     
             }
             .padding(.bottom, 5)
             
             Button {
                 transactionVM.createTransaction(context: context)
-                //trigger sheet again
             } label: {
-                Text("Save & Add Another")
-                    .font(.headline)
-                    .foregroundStyle(.white)
-                    .padding(.vertical, 10)
-                    .padding(.horizontal)
-                    .background {
-                        Capsule()
-                            .foregroundStyle(.black)
-                    }
-                    
+                BlackButtonView(text: "Save & Add Another", horizontalPadding: 20)
             }
             
             Spacer()
@@ -186,6 +139,60 @@ struct DismissButton: View {
                     .symbolRenderingMode(.palette)
                     .foregroundStyle(Color(.systemGray2), Color(.secondarySystemBackground))
                     .frame(width: 32)
+            }
+        }
+    }
+}
+
+struct BlackButtonView: View {
+    let text: String
+    let horizontalPadding: CGFloat
+    
+    var body: some View {
+        Text(text)
+            .font(.headline)
+            .foregroundStyle(.white)
+            .padding(.vertical, 10)
+            .padding(.horizontal, horizontalPadding)
+            .background {
+                Capsule()
+                    .foregroundStyle(.black)
+            }
+    }
+}
+
+struct DateRowView: View {
+    @Bindable var transactionVM: TransactionViewModel
+    
+    var body: some View {
+        HStack {
+            Image(systemName: "calendar")
+            
+            ZStack {
+                DatePicker("", selection: $transactionVM.date, displayedComponents: .date)
+                    .labelsHidden()
+                    .blendMode(.destinationOver)
+                
+                Text(transactionVM.date, format: .dateTime.weekday(.wide).day().month(.wide))
+                    .font(.headline).fontWeight(.regular)
+                    .allowsHitTesting(false)
+            }
+            
+            Spacer()
+            
+            Button {
+                transactionVM.decrementDate()
+            } label: {
+                Image(systemName: "chevron.left")
+                    .foregroundStyle(.eBlack)
+            }
+            .padding(.trailing)
+            
+            Button {
+                transactionVM.incrementDate()
+            } label: {
+                Image(systemName: "chevron.right")
+                    .foregroundStyle(.eBlack)
             }
         }
     }
