@@ -35,7 +35,7 @@ struct CategorySheetView: View {
                         LazyVGrid(columns: columns) {
                             ForEach(categoryVM.sortedSubCategories(cat: parent.subCategories)) { cat in
                                 Button {
-                                    transactionVM.category = cat
+                                    transactionVM.selectedCategories[transactionVM.transactionType] = cat
                                     dismiss()
                                 } label: {
                                     CategoryButtonView(imageName: cat.iconName, categoryName: cat.name, hex: cat.colorHex)

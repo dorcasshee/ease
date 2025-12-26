@@ -71,7 +71,7 @@ extension TransactionCategory {
         context.insert(healthAndFitness)
         context.insert(TransactionCategory(name: "Insurance", iconName: "dollarsign.circle", colorHex: Strings.Colors.eBlueLightHex, transactionType: .expense, parentCategory: healthAndFitness))
         context.insert(TransactionCategory(name: "Medical Bills", iconName: "stethoscope", colorHex: Strings.Colors.eBlueLightHex, transactionType: .expense, parentCategory: healthAndFitness))
-        context.insert(TransactionCategory(name: "Medication", iconName: "stethoscope", colorHex: Strings.Colors.eBlueLightHex, transactionType: .expense, parentCategory: healthAndFitness))
+        context.insert(TransactionCategory(name: "Medication", iconName: "pill", colorHex: Strings.Colors.eBlueLightHex, transactionType: .expense, parentCategory: healthAndFitness))
         context.insert(TransactionCategory(name: "Wellness", iconName: "figure.run", colorHex: Strings.Colors.eBlueLightHex, transactionType: .expense, parentCategory: healthAndFitness))
 
         // housing
@@ -84,9 +84,9 @@ extension TransactionCategory {
         // income
         let income = TransactionCategory(name: "Income", iconName: "dollarsign", transactionType: .income)
         context.insert(income)
-        context.insert(TransactionCategory(name: "Salary", iconName: "dollarsign.circle", colorHex: Strings.Colors.eOrangeLightHex, transactionType: .income, parentCategory: income))
+        context.insert(TransactionCategory(name: "Salary", iconName: "dollarsign.circle", colorHex: Strings.Colors.eOrangeLightHex, isDefault: true, transactionType: .income, parentCategory: income))
         context.insert(TransactionCategory(name: "Freelance", iconName: "dollarsign.circle", colorHex: Strings.Colors.eOrangeLightHex, transactionType: .income, parentCategory: income))
-        context.insert(TransactionCategory(name: "Dividends", iconName: "dollarsign.circle", colorHex: Strings.Colors.eOrangeLightHex, isDefault: true, transactionType: .income, parentCategory: income))
+        context.insert(TransactionCategory(name: "Dividends", iconName: "dollarsign.circle", colorHex: Strings.Colors.eOrangeLightHex, transactionType: .income, parentCategory: income))
         
         // personal care
         let personal = TransactionCategory(name: "Personal Care", iconName: "person", transactionType: .expense)

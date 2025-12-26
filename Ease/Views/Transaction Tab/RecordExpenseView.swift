@@ -14,8 +14,8 @@ struct RecordExpenseView: View {
     
     @Query private var categories: [TransactionCategory]
     
-    @State private var transactionVM = TransactionViewModel()
     @State private var categoryVM = CategoryViewModel()
+    @Bindable var transactionVM: TransactionViewModel
     
     var body: some View {
         VStack {
@@ -41,60 +41,12 @@ struct RecordExpenseView: View {
             .padding(.bottom)
             .frame(width: 250)
             
-            VStack(spacing: 20) {
-                CustomDivider()
-                
-                Button {
-                    transactionVM.showSheet = true
-                } label: {
-                    HStack {
-                        Label("Category:", systemImage: "circle.grid.2x2")
-                            .foregroundStyle(.eBlack)
-                        
-                        Label(transactionVM.category?.name ?? "", systemImage: transactionVM.category?.iconName ?? "")
-                            .foregroundStyle(Color(hex: transactionVM.category?.colorHex ?? Strings.Colors.eBlack))
-                        
-                        Spacer()
-                    }
-                    .font(.headline)
-                }
-                .sheet(isPresented: $transactionVM.showSheet) {
-                    CategorySheetView(transactionVM: transactionVM)
-                }
-                
-                CustomDivider()
-                
-                HStack {
-                    Label("Paid To:", systemImage: "person")
-                        .font(.headline)
-                        .foregroundStyle(.eBlack)
-                    
-                    TextField(text: $transactionVM.payeeName) {
-                    }
-                }
-                
-                CustomDivider()
-                
-                HStack {
-                    Image(systemName: "line.3.horizontal")
-                    
-                    TextField("Description", text: $transactionVM.desc) {}
-                        .font(.headline).fontWeight(.regular)
-                }
-                
-                CustomDivider()
-                
-                DateRowView(transactionVM: transactionVM)
-                
-                CustomDivider()
-            }
-            .padding(.top, 10)
-            .padding(.bottom, 25)
+            RecordExpenseBodyView(categoryVM: categoryVM, transactionVM: transactionVM)
             
             Button {
-                // dismiss sheet
-                transactionVM.createTransaction(context: context)
-                dismiss()
+                if transactionVM.createTransaction(context: context) {
+                    dismiss()
+                }
             } label: {
                 BlackButtonView(text: "Save", horizontalPadding: 80)
                     
@@ -102,15 +54,16 @@ struct RecordExpenseView: View {
             .padding(.bottom, 5)
             
             Button {
-                transactionVM.createTransaction(context: context)
+                if transactionVM.createTransaction(context: context) {
+                    transactionVM.resetForm()
+                }
             } label: {
                 BlackButtonView(text: "Save & Add Another", horizontalPadding: 20)
             }
             
             Spacer()
         }
-        .padding(.horizontal, 30)
-        .padding(.vertical)
+        .padding()
         .alert(transactionVM.valError?.errorTitle ?? "Error", isPresented: $transactionVM.showError) {
             Button("OK", role: .cancel) {}
         } message: {
@@ -118,11 +71,16 @@ struct RecordExpenseView: View {
         }
         .onAppear {
             if transactionVM.category == nil {
-                transactionVM.category = try? categoryVM.getDefaultCategory(for: transactionVM.transactionType, context: context)
+                transactionVM.selectedCategories[transactionVM.transactionType] = try? categoryVM.getDefaultCategory(for: transactionVM.transactionType, context: context)
             }
         }
         .onChange(of: transactionVM.transactionType) { _, newValue in
-            transactionVM.category = try? categoryVM.getDefaultCategory(for: newValue, context: context)
+            if transactionVM.selectedCategories[newValue] == nil {
+                transactionVM.selectedCategories[newValue] = try? categoryVM.getDefaultCategory(for: newValue, context: context)
+            }
+        }
+        .onDisappear {
+            transactionVM.resetForm()
         }
     }
 }
@@ -172,6 +130,63 @@ struct BlackButtonView: View {
     }
 }
 
+struct RecordExpenseBodyView: View {
+    @Bindable var categoryVM: CategoryViewModel
+    @Bindable var transactionVM: TransactionViewModel
+    
+    var body: some View {
+        VStack(spacing: 20) {
+            CustomDivider()
+            
+            Button {
+                categoryVM.showSheet = true
+            } label: {
+                HStack {
+                    Label("Category:", systemImage: "circle.grid.2x2")
+                        .foregroundStyle(.eBlack)
+                    
+                    Label(transactionVM.category?.name ?? "", systemImage: transactionVM.category?.iconName ?? "")
+                        .foregroundStyle(Color(hex: transactionVM.category?.colorHex ?? Strings.Colors.eBlack))
+                    
+                    Spacer()
+                }
+                .font(.headline)
+            }
+            .sheet(isPresented: $categoryVM.showSheet) {
+                CategorySheetView(transactionVM: transactionVM)
+            }
+            
+            CustomDivider()
+            
+            HStack {
+                Label("Paid To:", systemImage: "person")
+                    .font(.headline)
+                    .foregroundStyle(.eBlack)
+                
+                TextField(text: $transactionVM.payeeName) {}
+            }
+            
+            CustomDivider()
+            
+            HStack {
+                Image(systemName: "line.3.horizontal")
+                
+                TextField("Description", text: $transactionVM.desc) {}
+                    .font(.headline).fontWeight(.regular)
+            }
+            
+            CustomDivider()
+            
+            DateRowView(transactionVM: transactionVM)
+            
+            CustomDivider()
+        }
+        .padding(.top, 10)
+        .padding(.bottom, 25)
+        .padding(.horizontal, 10)
+    }
+}
+
 struct DateRowView: View {
     @Bindable var transactionVM: TransactionViewModel
     
@@ -210,6 +225,6 @@ struct DateRowView: View {
 }
 
 #Preview {
-    RecordExpenseView()
+    RecordExpenseView(transactionVM: TransactionViewModel())
         .modelContainer(.preview)
 }

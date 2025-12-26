@@ -18,29 +18,31 @@ import SwiftData
     var isSelected: Bool = false
     var date: Date
     var transactionType: TransactionType = .expense
-    var category: TransactionCategory?
+    var selectedCategories: [TransactionType: TransactionCategory] = [:]
     var desc: String = ""
     var payeeName: String = ""
     var isRecurring: Bool = false
-    
-    var selectedCategory: TransactionCategory?
     
     var showError: Bool = false
     var valError: AppError?
     
     var showSheet: Bool = false
     
+    var category: TransactionCategory? {
+        selectedCategories[transactionType]
+    }
+    
     init() {
         self.payeeViewModel = PayeeViewModel()
         self.date = Date()
     }
     
-    func createTransaction(context: ModelContext) {
+    func createTransaction(context: ModelContext) -> Bool {
         showError = false
         valError = nil
         
         do {
-            guard let category = category else { throw AppError.missingCategory }
+            guard let category = selectedCategories[transactionType] else { throw AppError.missingCategory }
             guard amount > 0 else { throw AppError.invalidAmount }
             
             let trimmedName = payeeName.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -55,22 +57,25 @@ import SwiftData
             
             context.insert(newTransaction)
             try context.save()
+            return true
         } catch let error as AppError {
             valError = error
             showError = true
+            return false
         } catch {
             valError = .unexpectedError
             showError = true
+            return false
         }
     }
     
-    func updateTransaction(context: ModelContext, item: Transaction) {
+    func updateTransaction(context: ModelContext, item: Transaction) -> Bool {
         showError = false
         valError = nil
         
         do {
-            guard let category = category else { throw AppError.missingCategory } // missingCategory error
-            guard amount > 0 else { throw AppError.invalidAmount } // invalid amount error
+            guard let category = selectedCategories[transactionType] else { throw AppError.missingCategory }
+            guard amount > 0 else { throw AppError.invalidAmount }
             
             let trimmedName = payeeName.trimmingCharacters(in: .whitespacesAndNewlines)
             
@@ -82,17 +87,30 @@ import SwiftData
             item.isRecurring = isRecurring
             
             try context.save()
+            return true
         } catch let error as AppError {
             valError = error
             showError = true
+            return false
         } catch {
             valError = .unexpectedError
             showError = true
+            return false
         }
     }
     
     func deleteTransaction(context: ModelContext, item: Transaction) {
         context.delete(item)
+    }
+    
+    func resetForm() {
+        amount = 0
+        transactionType = .expense
+        selectedCategories.removeAll()
+        desc = ""
+        payeeName = ""
+        date = Date()
+        isRecurring = false
     }
     
     func incrementDate() {
@@ -103,6 +121,18 @@ import SwiftData
     
     func decrementDate() {
         if let newDate = Calendar.current.date(byAdding: .day, value: -1, to: date) {
+            date = newDate
+        }
+    }
+    
+    func decrementMonth() {
+        if let newDate = Calendar.current.date(byAdding: .month, value: -1, to: date) {
+            date = newDate // need to change the variable to save this to
+        }
+    }
+    
+    func incrementMonth() {
+        if let newDate = Calendar.current.date(byAdding: .month, value: 1, to: date) {
             date = newDate
         }
     }

@@ -59,7 +59,7 @@ extension ModelContainer {
         context.insert(healthAndFitness)
         context.insert(TransactionCategory(name: "Insurance", iconName: "dollarsign.circle", colorHex: Strings.Colors.eBlueLightHex, transactionType: .expense, parentCategory: healthAndFitness))
         context.insert(TransactionCategory(name: "Medical Bills", iconName: "stethoscope", colorHex: Strings.Colors.eBlueLightHex, transactionType: .expense, parentCategory: healthAndFitness))
-        context.insert(TransactionCategory(name: "Medication", iconName: "stethoscope", colorHex: Strings.Colors.eBlueLightHex, transactionType: .expense, parentCategory: healthAndFitness))
+        context.insert(TransactionCategory(name: "Medication", iconName: "pill", colorHex: Strings.Colors.eBlueLightHex, transactionType: .expense, parentCategory: healthAndFitness))
         context.insert(TransactionCategory(name: "Wellness", iconName: "figure.run", colorHex: Strings.Colors.eBlueLightHex, transactionType: .expense, parentCategory: healthAndFitness))
         
         // housing
@@ -72,9 +72,9 @@ extension ModelContainer {
         // income
         let income = TransactionCategory(name: "Income", iconName: "dollarsign", transactionType: .income)
         context.insert(income)
-        context.insert(TransactionCategory(name: "Salary", iconName: "dollarsign.circle", colorHex: Strings.Colors.eOrangeLightHex, transactionType: .income, parentCategory: income))
+        context.insert(TransactionCategory(name: "Salary", iconName: "dollarsign.circle", colorHex: Strings.Colors.eOrangeLightHex, isDefault: true, transactionType: .income, parentCategory: income))
         context.insert(TransactionCategory(name: "Freelance", iconName: "dollarsign.circle", colorHex: Strings.Colors.eOrangeLightHex, transactionType: .income, parentCategory: income))
-        context.insert(TransactionCategory(name: "Dividends", iconName: "dollarsign.circle", colorHex: Strings.Colors.eOrangeLightHex, isDefault: true, transactionType: .income, parentCategory: income))
+        context.insert(TransactionCategory(name: "Dividends", iconName: "dollarsign.circle", colorHex: Strings.Colors.eOrangeLightHex, transactionType: .income, parentCategory: income))
         
         // personal care
         let personal = TransactionCategory(name: "Personal Care", iconName: "person", transactionType: .expense)
@@ -87,9 +87,90 @@ extension ModelContainer {
         // transport
         let transport = TransactionCategory(name: "Transport", iconName: "car", transactionType: .expense)
         context.insert(transport)
-        context.insert(TransactionCategory(name: "Public Transport", iconName: "bus", colorHex: Strings.Colors.ePinkLightHex, transactionType: .expense, parentCategory: transport))
-        context.insert(TransactionCategory(name: "Private Hire", iconName: "car", colorHex: Strings.Colors.ePinkLightHex, transactionType: .expense, parentCategory: transport))
-        
+        let publicTransport = TransactionCategory(name: "Public Transport", iconName: "bus", colorHex: Strings.Colors.ePinkLightHex, transactionType: .expense, parentCategory: transport)
+        context.insert(publicTransport)
+        let privateHire = TransactionCategory(name: "Private Hire", iconName: "car", colorHex: Strings.Colors.ePinkLightHex, transactionType: .expense, parentCategory: transport)
+        context.insert(privateHire)
+
+        // Create sample subcategories for transactions
+        let gaming = TransactionCategory(name: "Gaming", iconName: "formfitting.gamecontroller", colorHex: Strings.Colors.ePinkLightHex, transactionType: .expense, parentCategory: entertainment)
+        context.insert(gaming)
+
+        let groceries = TransactionCategory(name: "Groceries", iconName: "cart", colorHex: Strings.Colors.eOrangeLightHex, transactionType: .expense, parentCategory: food)
+        context.insert(groceries)
+
+        let takeout = TransactionCategory(name: "Takeout", iconName: "takeoutbag.and.cup.and.straw", colorHex: Strings.Colors.eOrangeLightHex, transactionType: .expense, parentCategory: food)
+        context.insert(takeout)
+
+        let salary = TransactionCategory(name: "Salary", iconName: "dollarsign.circle", colorHex: Strings.Colors.eOrangeLightHex, isDefault: true, transactionType: .income, parentCategory: income)
+        context.insert(salary)
+
+        let hairCare = TransactionCategory(name: "Hair Care", iconName: "bubbles.and.sparkles", colorHex: Strings.Colors.eBlueLightHex, transactionType: .expense, parentCategory: personal)
+        context.insert(hairCare)
+
+        // Create sample payees
+        let starbucks = Payee(name: "Starbucks")
+        context.insert(starbucks)
+
+        let uber = Payee(name: "Uber")
+        context.insert(uber)
+
+        let fairprice = Payee(name: "FairPrice")
+        context.insert(fairprice)
+
+        // Create sample transactions
+        let calendar = Calendar.current
+
+        // Transaction 1: Monthly salary (income)
+        let salaryTransaction = Transaction(
+            amount: 5000.00,
+            category: salary,
+            desc: "December salary",
+            payee: nil,
+            date: calendar.date(byAdding: .day, value: -25, to: Date()) ?? Date()
+        )
+        context.insert(salaryTransaction)
+
+        // Transaction 2: Groceries
+        let groceriesTransaction = Transaction(
+            amount: 87.50,
+            category: groceries,
+            desc: "Weekly groceries",
+            payee: fairprice,
+            date: calendar.date(byAdding: .day, value: -3, to: Date()) ?? Date()
+        )
+        context.insert(groceriesTransaction)
+
+        // Transaction 3: Coffee
+        let coffeeTransaction = Transaction(
+            amount: 12.80,
+            category: takeout,
+            desc: "Morning coffee",
+            payee: starbucks,
+            date: calendar.date(byAdding: .day, value: -1, to: Date()) ?? Date()
+        )
+        context.insert(coffeeTransaction)
+
+        // Transaction 4: Uber ride
+        let uberTransaction = Transaction(
+            amount: 24.50,
+            category: privateHire,
+            desc: nil,
+            payee: uber,
+            date: calendar.date(byAdding: .day, value: -2, to: Date()) ?? Date()
+        )
+        context.insert(uberTransaction)
+
+        // Transaction 5: Gaming purchase
+        let gamingTransaction = Transaction(
+            amount: 69.90,
+            category: gaming,
+            desc: "New game on Steam",
+            payee: nil,
+            date: calendar.date(byAdding: .day, value: -5, to: Date()) ?? Date()
+        )
+        context.insert(gamingTransaction)
+
         return container
     }
 }

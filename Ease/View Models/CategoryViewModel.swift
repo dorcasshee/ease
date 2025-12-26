@@ -9,6 +9,7 @@ import Foundation
 import SwiftData
 
 @Observable class CategoryViewModel {
+    var showSheet: Bool = false
     
     func createCategory(context: ModelContext) {
         

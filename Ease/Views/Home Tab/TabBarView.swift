@@ -18,10 +18,6 @@ struct TabBarView: View {
                 TransactionTab()
             }
             
-            Tab(String(), systemImage: "plus.circle") {
-                RecordExpenseView()
-            }
-            
             Tab(String(), systemImage: "gearshape") {
                 SettingsTab()
             }
