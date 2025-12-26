@@ -43,6 +43,12 @@ class TransactionCategory {
     }
 }
 
+struct TransactionSection: Identifiable {
+    var id = UUID()
+    var date: Date
+    var transactions: [Transaction]
+}
+
 extension TransactionCategory {
     static func seedDefaultCategories(in context: ModelContext) throws {
         let fetchDesc = FetchDescriptor<TransactionCategory>()

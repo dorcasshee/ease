@@ -24,7 +24,7 @@ struct RecordExpenseView: View {
             Text("New Transaction")
                 .font(.headline).fontWeight(.regular)
             
-            TextField("$0.00", value: $transactionVM.amount, format: .currency(code: "SGD")) // allow currency to change
+            TextField("$0.00", value: $transactionVM.amount, format: .currency(code: Locale.current.currency?.identifier ?? "USD")) // allow currency to change
                 .font(.system(size: 50, weight: .bold))
                 .keyboardType(.decimalPad)
                 .multilineTextAlignment(.center)
@@ -48,7 +48,8 @@ struct RecordExpenseView: View {
                     dismiss()
                 }
             } label: {
-                BlackButtonView(text: "Save", horizontalPadding: 80)
+                Text("Save")
+                    .blackButtonStyle(horizontalPadding: 80)
                     
             }
             .padding(.bottom, 5)
@@ -58,7 +59,8 @@ struct RecordExpenseView: View {
                     transactionVM.resetForm()
                 }
             } label: {
-                BlackButtonView(text: "Save & Add Another", horizontalPadding: 20)
+                Text("Save & Add Another")
+                    .blackButtonStyle()
             }
             
             Spacer()
@@ -113,13 +115,13 @@ struct DismissButton: View {
     }
 }
 
-struct BlackButtonView: View {
-    let text: String
+struct BlackButtonStyle: ViewModifier {
     let horizontalPadding: CGFloat
+    let font: Font
     
-    var body: some View {
-        Text(text)
-            .font(.headline)
+    func body(content: Content) -> some View {
+        content
+            .font(font)
             .foregroundStyle(.white)
             .padding(.vertical, 10)
             .padding(.horizontal, horizontalPadding)
@@ -127,6 +129,12 @@ struct BlackButtonView: View {
                 Capsule()
                     .foregroundStyle(.black)
             }
+    }
+}
+
+extension View {
+    func blackButtonStyle(horizontalPadding: CGFloat = 20, font: Font = .headline) -> some View {
+        modifier(BlackButtonStyle(horizontalPadding: horizontalPadding, font: font))
     }
 }
 

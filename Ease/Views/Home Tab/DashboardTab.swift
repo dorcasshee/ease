@@ -6,13 +6,26 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct DashboardTab: View {
+    var transactionVM: TransactionViewModel
+    
     var body: some View {
-        Text("Dashboard")
+        VStack {
+            MonthPickerView(transactionVM: transactionVM)
+            
+            Spacer()
+            
+            Text("Dashboard")
+            
+            Spacer()
+        }
+        .padding()
     }
 }
 
 #Preview {
-    DashboardTab()
+    DashboardTab(transactionVM: TransactionViewModel())
+        .modelContainer(.preview)
 }

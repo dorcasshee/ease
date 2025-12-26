@@ -32,6 +32,9 @@ import SwiftData
         selectedCategories[transactionType]
     }
     
+    var currentDate: Date = Date()
+    var currentMonthTransactions: [Transaction] = []
+    
     init() {
         self.payeeViewModel = PayeeViewModel()
         self.date = Date()
@@ -113,6 +116,16 @@ import SwiftData
         isRecurring = false
     }
     
+    func getTransactionsByMonth(transactions: [Transaction]) {
+        currentMonthTransactions = transactions.filter { transaction in
+            Calendar.current.isDate(transaction.date, equalTo: currentDate, toGranularity: .month)
+        }
+    }
+    
+    func getTransactionsByDate(transactions: [Transaction]) {
+        
+    }
+    
     func incrementDate() {
         if let newDate = Calendar.current.date(byAdding: .day, value: 1, to: date) {
             date = newDate
@@ -126,14 +139,14 @@ import SwiftData
     }
     
     func decrementMonth() {
-        if let newDate = Calendar.current.date(byAdding: .month, value: -1, to: date) {
-            date = newDate // need to change the variable to save this to
+        if let newDate = Calendar.current.date(byAdding: .month, value: -1, to: currentDate) {
+            currentDate = newDate
         }
     }
     
     func incrementMonth() {
-        if let newDate = Calendar.current.date(byAdding: .month, value: 1, to: date) {
-            date = newDate
+        if let newDate = Calendar.current.date(byAdding: .month, value: 1, to: currentDate) {
+            currentDate = newDate
         }
     }
 }
