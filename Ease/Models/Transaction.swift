@@ -14,6 +14,18 @@ class Transaction {
     var desc: String?
     var date: Date
     var isRecurring: Bool
+    
+    var formattedAmount: String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.currencyCode = Locale.current.currency?.identifier ?? "USD"
+
+        let sign = category.transactionType == .expense ? "-" : "+"
+        let formatted = formatter.string(from: NSNumber(value: amount)) ?? "$0.00"
+
+        return sign + formatted
+    }
+    
     @Relationship var category: TransactionCategory
     @Relationship var payee: Payee?
     

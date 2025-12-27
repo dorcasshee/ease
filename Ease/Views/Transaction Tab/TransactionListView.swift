@@ -47,7 +47,7 @@ struct TransactionRowView: View {
             
             VStack(alignment: .leading) {
                 Text(transaction.desc ?? transaction.category.name)
-                    .font(.headline)
+                    .font(.headline.weight(.medium))
                 
                 if transaction.desc != nil {
                     Text(transaction.category.name)
@@ -64,8 +64,10 @@ struct TransactionRowView: View {
             
             Spacer()
             
-            Text(transaction.amount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
+            Text(transaction.formattedAmount)
                 .font(.headline.weight(.light))
+//                .foregroundStyle(transaction.category.transactionType == .expense ? .red : .green)
+                .foregroundStyle(.secondary)
         }
         .padding(.vertical, 5)
     }
