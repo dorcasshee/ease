@@ -38,26 +38,14 @@ struct CategorySheetView: View {
                                     transactionVM.selectedCategories[transactionVM.transactionType] = cat
                                     dismiss()
                                 } label: {
-                                    CategoryButtonView(imageName: cat.iconName, categoryName: cat.name, hex: cat.colorHex)
+                                    CategoryButtonView(categoryName: cat.name, imageName: cat.iconName, color: cat.transactionType.color)
                                         .padding(.bottom, 5)
                                 }
                             }
                         }
                         .padding(.bottom)
                     } header: {
-                        VStack {
-                            HStack(alignment: .top) {
-                                Label(parent.name, systemImage: parent.iconName)
-                                    .font(.title3.bold())
-                                    .foregroundStyle(.eBlack)
-                                
-                                Spacer()
-                                
-                                CounterView(count: "\(parent.subCategories.count)")
-                            }
-                            
-                            Divider()
-                        }
+                        CategoryHeaderView(name: parent.name, iconName: parent.iconName, count: parent.subCategories.count)
                     }
                     .padding(.bottom, 10)
                 }
@@ -74,17 +62,25 @@ struct CategorySheetView: View {
         .modelContainer(.preview)
 }
 
-extension Color {
-    init(hex: String, opacity: Double = 1) {
-        var rgb: UInt64 = 0
-        Scanner(string: hex).scanHexInt64(&rgb)
-        
-        self.init(.sRGB,
-                  red: Double((rgb >> 16) & 0xff) / 255,
-                  green: Double((rgb >> 8) & 0xff) / 255,
-                  blue: Double((rgb >> 0) & 0xff) / 255,
-                  opacity: opacity
-        )
+struct CategoryHeaderView: View {
+    let name: String
+    let iconName: String
+    let count: Int
+    
+    var body: some View {
+        VStack {
+            HStack(alignment: .top) {
+                Label(name, systemImage: iconName)
+                    .font(.title3.bold())
+                    .foregroundStyle(.eBlack)
+                
+                Spacer()
+                
+                CounterView(count: "\(count)")
+            }
+            
+            CustomDivider()
+        }
     }
 }
 
@@ -103,17 +99,13 @@ struct CounterView: View {
 }
 
 struct CategoryButtonView: View {
-    let imageName: String
     let categoryName: String
-    let hex: String
+    let imageName: String
+    let color: Color
     
     var body: some View {
         VStack(alignment: .center, spacing: 10) {
-            Image(systemName: imageName)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 40, height: 40)
-                .foregroundStyle(Color(hex: hex))
+            CategoryIconView(imageName: imageName, color: color)
             
             Text(categoryName)
                 .font(.caption)
@@ -121,6 +113,23 @@ struct CategoryButtonView: View {
                 .foregroundStyle(.eBlack)
             
             Spacer()
+        }
+    }
+}
+
+struct CategoryIconView: View {
+    let imageName: String
+    let color: Color
+    
+    var body: some View {
+        ZStack(alignment: .center) {
+            Circle()
+                .frame(width: 50, height: 50)
+                .foregroundStyle(color)
+            
+            Image(systemName: imageName)
+                .font(.title3.bold())
+                .foregroundStyle(.white)
         }
     }
 }

@@ -14,87 +14,41 @@ struct TransactionListView: View {
     var transactions: [Transaction]
     
     var body: some View {
-        ScrollView {
-            ForEach(transactionVM.transactionSections) { section in
-                VStack {
-                    TransactionHeaderView(date: section.date)
-                        .padding(.bottom, 5)
-                    
-                    ForEach(section.transactions) { transaction in
-                        TransactionRowView(transaction: transaction)
+        if transactionVM.currentMonthTransactions.isEmpty {
+            ContentUnavailableView("No Transactions", systemImage: "tray", description: Text("Start tracking your expenses by tapping the + button."))
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else {
+            ScrollView {
+                ForEach(transactionVM.transactionSections) { section in
+                    VStack {
+                        TransactionHeaderView(date: section.formattedDate, amount: section.formattedTotal)
+                            .padding(.bottom, 5)
+                        
+                        ForEach(section.transactions) { transaction in
+                            Button {
+                                
+                            } label: {
+                                TransactionRowView(transaction: transaction)
+                            }
+                            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                Button(role: .destructive) {
+                                    transactionVM.deleteTransaction(context: context, item: transaction)
+                                } label: {
+                                    Image(systemName: "trash")
+                                }
+                                .tint(.red)
+                            }
+                        }
                     }
+                    .padding(.bottom, 30)
                 }
-                .padding(.bottom, 30)
-            }
-        }
-        .scrollBounceBehavior(.basedOnSize)
-        .scrollIndicators(.hidden)
-        .padding(.horizontal, 10)
-    }
-}
-
-struct TransactionRowView: View {
-    var transaction: Transaction
-    
-    var body: some View {
-        HStack(alignment: .top) {
-            Image(systemName: transaction.category.iconName)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 40, height: 40)
-                .foregroundStyle(Color(hex: transaction.category.colorHex))
-                .padding(.trailing, 10)
-            
-            VStack(alignment: .leading) {
-                Text(transaction.desc ?? transaction.category.name)
-                    .font(.headline.weight(.medium))
-                
-                if transaction.desc != nil {
-                    Text(transaction.category.name)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-                
-                if transaction.payee != nil {
-                    Text(transaction.payee?.name ?? "")
-                        .font(.caption.bold())
-                        .foregroundStyle(.secondary)
-                }
-            }
-            
-            Spacer()
-            
-            Text(transaction.formattedAmount)
-                .font(.headline.weight(.light))
-//                .foregroundStyle(transaction.category.transactionType == .expense ? .red : .green)
-                .foregroundStyle(.secondary)
-        }
-        .padding(.vertical, 5)
-    }
-}
-
-struct TransactionHeaderView: View {
-    var date: Date
-    
-    var body: some View {
-        VStack() {
-            HStack {
-                Text(date, format: .dateTime.weekday(.wide).day().month(.wide))
                 
                 Spacer()
-                
-                Text("$50.00")
             }
-            .font(.title3.weight(.medium))
-            
-            CustomDivider()
+            .scrollBounceBehavior(.basedOnSize)
+            .scrollIndicators(.hidden)
+            .padding(.horizontal, 10)
         }
-    }
-}
-
-struct EmptyTransactionListView: View {
-    var body: some View {
-        Text("No transactions")
     }
 }
 

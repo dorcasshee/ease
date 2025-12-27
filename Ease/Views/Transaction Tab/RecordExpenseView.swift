@@ -24,7 +24,7 @@ struct RecordExpenseView: View {
             Text("New Transaction")
                 .font(.headline).fontWeight(.regular)
             
-            TextField("$0.00", value: $transactionVM.amount, format: .currency(code: Locale.current.currency?.identifier ?? "USD")) // allow currency to change
+            TextField("$0.00", value: $transactionVM.amount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
                 .font(.system(size: 50, weight: .bold))
                 .keyboardType(.decimalPad)
                 .multilineTextAlignment(.center)
@@ -90,7 +90,7 @@ struct RecordExpenseView: View {
 struct CustomDivider: View {
     var body: some View {
         Divider()
-            .opacity(0.75)
+            .opacity(0.8)
     }
 }
 
@@ -122,12 +122,12 @@ struct BlackButtonStyle: ViewModifier {
     func body(content: Content) -> some View {
         content
             .font(font)
-            .foregroundStyle(.white)
+            .foregroundStyle(.eWhite)
             .padding(.vertical, 10)
             .padding(.horizontal, horizontalPadding)
             .background {
                 Capsule()
-                    .foregroundStyle(.black)
+                    .foregroundStyle(.eBlack)
             }
     }
 }
@@ -154,7 +154,7 @@ struct RecordExpenseBodyView: View {
                         .foregroundStyle(.eBlack)
                     
                     Label(transactionVM.category?.name ?? "", systemImage: transactionVM.category?.iconName ?? "")
-                        .foregroundStyle(Color(hex: transactionVM.category?.colorHex ?? Strings.Colors.eBlack))
+                        .foregroundStyle(transactionVM.transactionType.color)
                     
                     Spacer()
                 }
@@ -167,11 +167,13 @@ struct RecordExpenseBodyView: View {
             CustomDivider()
             
             HStack {
-                Label("Paid To:", systemImage: "person")
+                Label(transactionVM.category?.transactionType == .expense ? "Paid To:" : "Received From:", systemImage: "person")
                     .font(.headline)
                     .foregroundStyle(.eBlack)
                 
-                TextField(text: $transactionVM.payeeName) {}
+                TextField(text: $transactionVM.payeeName) {
+                    Text("Entity")
+                }
             }
             
             CustomDivider()

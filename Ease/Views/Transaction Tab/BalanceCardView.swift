@@ -8,41 +8,22 @@
 import SwiftUI
 
 struct BalanceCardView: View {
+    var transactionVM: TransactionViewModel
+
     var body: some View {
         HStack {
-            VStack {
-                Text("$4,500")
-                    .font(.title2.bold())
-                
-                Text("Income")
-                    .font(.caption)
-                    .fontWeight(.light)
-            }
-            
+            BalanceItemView(amount: transactionVM.currentMonthIncome, label: "Income", useSmallFont: transactionVM.isSmallerSummary)
+
             Spacer()
-            
-            VStack {
-                Text("$60")
-                    .font(.title2.bold())
-                
-                Text("Expense")
-                    .font(.caption)
-                    .fontWeight(.light)
-            }
-            
+
+            BalanceItemView(amount: transactionVM.currentMonthExpense, label: "Expense", useSmallFont: transactionVM.isSmallerSummary)
+
             Spacer()
-            
-            VStack {
-                Text("$100,400")
-                    .font(.title2.bold())
-                
-                Text("Balance")
-                    .font(.caption)
-                    .fontWeight(.light)
-            }
+
+            BalanceItemView(amount: transactionVM.currentMonthBalance, label: "Balance", useSmallFont: transactionVM.isSmallerSummary)
         }
-        .padding()
-        .padding(.horizontal, 10)
+        .padding(.horizontal, 30)
+        .padding(.vertical)
         .background {
             RoundedRectangle(cornerRadius: 12)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -51,6 +32,24 @@ struct BalanceCardView: View {
     }
 }
 
+struct BalanceItemView: View {
+    let amount: Double
+    let label: String
+    let useSmallFont: Bool
+
+    var body: some View {
+        VStack {
+            Text(amount.formatAsCurrency())
+                .font(useSmallFont ? .subheadline : .title3)
+                .fontWeight(.bold)
+
+            Text(label)
+                .font(.caption.weight(.light))
+                .foregroundStyle(.secondary)
+        }
+    }
+}
+
 #Preview {
-    BalanceCardView()
+    BalanceCardView(transactionVM: TransactionViewModel())
 }

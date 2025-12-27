@@ -22,7 +22,7 @@ struct TransactionTab: View {
                 .padding(.top, 5)
                 .padding(.bottom)
             
-            BalanceCardView()
+            BalanceCardView(transactionVM: transactionVM)
                 .padding(.horizontal, 10)
             
             SearchFilterRowView()

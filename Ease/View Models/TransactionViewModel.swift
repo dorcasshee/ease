@@ -28,12 +28,14 @@ import SwiftData
     
     var showSheet: Bool = false
     
+    var currentDate: Date = Date()
+    var currentMonthTransactions: [Transaction] = []
+    
+    // computed properties
     var category: TransactionCategory? {
         selectedCategories[transactionType]
     }
     
-    var currentDate: Date = Date()
-    var currentMonthTransactions: [Transaction] = []
     var transactionSections: [TransactionSection] {
         let grouping = Dictionary(grouping: currentMonthTransactions, by: { Calendar.current.startOfDay(for: $0.date) })
         
@@ -41,6 +43,34 @@ import SwiftData
             TransactionSection(date: date, transactions: transactions)
         }
         .sorted { $0.date > $1.date }
+    }
+    
+    var currentMonthIncome: Double {
+        let incomeTrsns = currentMonthTransactions.filter { $0.category.transactionType == .income }
+        
+        return incomeTrsns.reduce(0) { result, trsn in
+            result + trsn.amount
+        }
+    }
+    
+    var currentMonthExpense: Double {
+        let expTrsns = currentMonthTransactions.filter { $0.category.transactionType == .expense }
+        
+        return expTrsns.reduce(0) { result, trsn in
+            result + trsn.amount
+        }
+    }
+    
+    var currentMonthBalance: Double {
+        return currentMonthIncome - currentMonthExpense
+    }
+    
+    var isSmallerSummary: Bool {
+        if currentMonthIncome.formatAsCurrency().count >= 8 || currentMonthExpense.formatAsCurrency().count >= 8 || currentMonthBalance.formatAsCurrency().count >= 8 {
+            return true
+        } else {
+            return false
+        }
     }
     
     init() {
@@ -153,13 +183,4 @@ import SwiftData
             currentDate = newDate
         }
     }
-}
-
-
-// MARK: Enums
-enum TransactionType: String, Identifiable, Codable {
-    case expense, income
-    var id: String { rawValue }
-    
-    static let allCases: [TransactionType] = [.expense, .income]
 }

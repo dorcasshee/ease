@@ -16,12 +16,8 @@ class Transaction {
     var isRecurring: Bool
     
     var formattedAmount: String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencyCode = Locale.current.currency?.identifier ?? "USD"
-
-        let sign = category.transactionType == .expense ? "-" : "+"
-        let formatted = formatter.string(from: NSNumber(value: amount)) ?? "$0.00"
+        let sign = category.transactionType == .expense ? "-" : ""
+        let formatted = amount.formatAsCurrency()
 
         return sign + formatted
     }
@@ -36,5 +32,41 @@ class Transaction {
         self.payee = payee
         self.date = date
         self.isRecurring = isRecurring
+    }
+}
+
+struct TransactionSection: Identifiable {
+    var id = UUID()
+    var date: Date
+    var transactions: [Transaction]
+    
+    var totalAmount: Double {
+        transactions.reduce(0) { $0 + ($1.category.transactionType == .expense ? -$1.amount : $1.amount) }
+    }
+    
+    var formattedTotal: String {
+        return totalAmount.formatAsCurrency()
+    }
+    
+    var formattedDate: String {
+        if Calendar.current.isDateInToday(date) {
+            return "Today"
+        } else if Calendar.current.isDateInYesterday(date) {
+            return "Yesterday"
+        } else {
+            let formatter = DateFormatter()
+            formatter.setLocalizedDateFormatFromTemplate("EEEEdMMMM")
+            return formatter.string(from: date)
+        }
+    }
+}
+
+extension Double {
+    func formatAsCurrency() -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.currencyCode = Locale.current.currency?.identifier ?? "USD"
+    
+        return formatter.string(from: NSNumber(value: self)) ?? "$0.00"
     }
 }
