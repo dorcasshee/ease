@@ -171,6 +171,16 @@ extension ModelContainer {
         )
         context.insert(gamingTransaction)
 
+        // Transaction 6: Haircut (same date as groceries to test section grouping)
+        let haircutTransaction = Transaction(
+            amount: 35.00,
+            category: hairCare,
+            desc: "Monthly haircut",
+            payee: nil,
+            date: calendar.date(byAdding: .day, value: -3, to: Date()) ?? Date()
+        )
+        context.insert(haircutTransaction)
+
         return container
     }
 }

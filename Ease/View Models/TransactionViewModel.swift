@@ -34,6 +34,14 @@ import SwiftData
     
     var currentDate: Date = Date()
     var currentMonthTransactions: [Transaction] = []
+    var transactionSections: [TransactionSection] {
+        let grouping = Dictionary(grouping: currentMonthTransactions, by: { Calendar.current.startOfDay(for: $0.date) })
+        
+        return grouping.map { (date, transactions) in
+            TransactionSection(date: date, transactions: transactions)
+        }
+        .sorted { $0.date > $1.date }
+    }
     
     init() {
         self.payeeViewModel = PayeeViewModel()
@@ -120,10 +128,6 @@ import SwiftData
         currentMonthTransactions = transactions.filter { transaction in
             Calendar.current.isDate(transaction.date, equalTo: currentDate, toGranularity: .month)
         }
-    }
-    
-    func getTransactionsByDate(transactions: [Transaction]) {
-        
     }
     
     func incrementDate() {
