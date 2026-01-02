@@ -22,9 +22,11 @@ struct TransactionHeaderView: View {
             }
             .font(.headline.weight(.heavy))
             .multilineTextAlignment(.leading)
+            .foregroundStyle(.eBlack)
             
             CustomDivider()
         }
+        .background(.eWhite)
     }
 }
 

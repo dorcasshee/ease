@@ -12,17 +12,6 @@ struct TransactionRowView: View {
     
     var body: some View {
         HStack(alignment: .top) {
-//            ZStack(alignment: .center) {
-//                Circle()
-//                    .frame(width: 50, height: 50)
-//                    .foregroundStyle(transaction.category.transactionType.color)
-//                
-//                Image(systemName: transaction.category.iconName)
-//                    .font(.title3.bold())
-//                    .foregroundStyle(.white)
-//            }
-//            .padding(.trailing, 10)
-//            
             CategoryIconView(imageName: transaction.category.iconName, color: transaction.category.transactionType.color)
                 .padding(.trailing, 10)
             
@@ -52,7 +41,7 @@ struct TransactionRowView: View {
                 .fontWeight(transaction.category.transactionType == .income ? .bold : .light)
                 .foregroundStyle(transaction.category.transactionType == .income ? .eGreen : .eBlack)
         }
-        .padding(.vertical, 5)
+        .padding(.bottom, 5)
     }
 }
 

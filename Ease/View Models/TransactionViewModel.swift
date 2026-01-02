@@ -97,7 +97,6 @@ import SwiftData
                                              isRecurring: isRecurring)
             
             context.insert(newTransaction)
-            try context.save()
             return true
         } catch let error as AppError {
             valError = error
@@ -142,6 +141,18 @@ import SwiftData
     
     func deleteTransaction(context: ModelContext, item: Transaction) {
         context.delete(item)
+    }
+    
+    func duplicateTransaction(item: Transaction) {
+        resetForm()
+        
+        amount = item.amount
+        transactionType = item.category.transactionType
+        selectedCategories = [transactionType: item.category]
+        desc = item.desc ?? ""
+        payeeName = item.payee?.name ?? ""
+        date = item.date
+        isRecurring = item.isRecurring
     }
     
     func resetForm() {

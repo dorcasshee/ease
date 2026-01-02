@@ -112,9 +112,9 @@ extension ModelContainer {
         let salaryTransaction = Transaction(
             amount: 5000.00,
             category: salary,
-            desc: "December salary",
+            desc: "January salary",
             payee: nil,
-            date: calendar.date(byAdding: .day, value: -25, to: Date()) ?? Date()
+            date: calendar.date(from: DateComponents(year: 2026, month: 1, day: 1)) ?? Date()
         )
         context.insert(salaryTransaction)
 
@@ -124,7 +124,7 @@ extension ModelContainer {
             category: groceries,
             desc: "Weekly groceries",
             payee: fairprice,
-            date: calendar.date(byAdding: .day, value: -3, to: Date()) ?? Date()
+            date: calendar.date(from: DateComponents(year: 2026, month: 1, day: 15)) ?? Date()
         )
         context.insert(groceriesTransaction)
 
@@ -134,7 +134,7 @@ extension ModelContainer {
             category: takeout,
             desc: "Morning coffee",
             payee: starbucks,
-            date: calendar.date(byAdding: .day, value: -1, to: Date()) ?? Date()
+            date: calendar.date(from: DateComponents(year: 2026, month: 1, day: 20)) ?? Date()
         )
         context.insert(coffeeTransaction)
 
@@ -144,7 +144,7 @@ extension ModelContainer {
             category: gaming,
             desc: "New game on Steam",
             payee: nil,
-            date: calendar.date(byAdding: .day, value: -5, to: Date()) ?? Date()
+            date: calendar.date(from: DateComponents(year: 2026, month: 1, day: 10)) ?? Date()
         )
         context.insert(gamingTransaction)
 
@@ -154,7 +154,7 @@ extension ModelContainer {
             category: hairCare,
             desc: "Monthly haircut",
             payee: nil,
-            date: calendar.date(byAdding: .day, value: -3, to: Date()) ?? Date()
+            date: calendar.date(from: DateComponents(year: 2026, month: 1, day: 15, hour: 17, minute: 30)) ?? Date()
         )
         context.insert(haircutTransaction)
 
