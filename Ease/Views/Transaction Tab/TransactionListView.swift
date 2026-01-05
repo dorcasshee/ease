@@ -21,26 +21,31 @@ struct TransactionListView: View {
             List(transactionVM.transactionSections) { section in
                 Section {
                     ForEach(section.transactions) { transaction in
-                        TransactionRowView(transaction: transaction)
-                            .listRowSeparator(.hidden)
-                            .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 10, trailing: 0))
-                            .listRowBackground(Color.clear)
-                            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                                Button(role: .destructive) {
-                                    transactionVM.deleteTransaction(context: context, item: transaction)
-                                } label: {
-                                    Label("Delete", systemImage: "trash")
-                                }
-                                .tint(.eRed)
-                                
-                                Button {
-                                    transactionVM.duplicateTransaction(item: transaction)
-                                    transactionVM.showSheet = true
-                                } label: {
-                                    Label("Duplicate", systemImage: "document.on.document")
-                                }
-                                .tint(Color.eBlue)
+                        Button {
+                            transactionVM.loadTransaction(trsn: transaction, forEditing: true)
+                            transactionVM.showSheet = true
+                        } label: {
+                            TransactionRowView(transaction: transaction)
+                        }
+                        .listRowSeparator(.hidden)
+                        .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 10, trailing: 0))
+                        .listRowBackground(Color.clear)
+                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                            Button(role: .destructive) {
+                                transactionVM.deleteTransaction(context: context, item: transaction)
+                            } label: {
+                                Label("Delete", systemImage: "trash")
                             }
+                            .tint(.eRed)
+                            
+                            Button {
+                                transactionVM.loadTransaction(trsn: transaction, forEditing: false)
+                                transactionVM.showSheet = true
+                            } label: {
+                                Label("Duplicate", systemImage: "document.on.document")
+                            }
+                            .tint(Color.eBlue)
+                        }
                     }
                 } header: {
                     TransactionHeaderView(date: section.formattedDate, amount: section.formattedTotal)

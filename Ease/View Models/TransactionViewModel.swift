@@ -28,6 +28,9 @@ import SwiftData
     
     var showSheet: Bool = false
     
+    var isEdit: Bool = false
+    var trsnToEdit: Transaction? = nil
+    
     var currentDate: Date = Date()
     var currentMonthTransactions: [Transaction] = []
     
@@ -78,7 +81,7 @@ import SwiftData
         self.date = Date()
     }
     
-    func createTransaction(context: ModelContext) -> Bool {
+    func saveTransaction(context: ModelContext) -> Bool {
         showError = false
         valError = nil
         
@@ -89,44 +92,20 @@ import SwiftData
             let trimmedName = payeeName.trimmingCharacters(in: .whitespacesAndNewlines)
             let payee = trimmedName.isEmpty ? nil : payeeViewModel.getOrCreatePayee(context: context, name: trimmedName)
             
-            let newTransaction = Transaction(amount: amount,
-                                             category: category,
-                                             desc: desc.isEmpty ? nil : desc,
-                                             payee: payee,
-                                             date: date,
-                                             isRecurring: isRecurring)
-            
-            context.insert(newTransaction)
-            return true
-        } catch let error as AppError {
-            valError = error
-            showError = true
-            return false
-        } catch {
-            valError = .unexpectedError
-            showError = true
-            return false
-        }
-    }
-    
-    func updateTransaction(context: ModelContext, item: Transaction) -> Bool {
-        showError = false
-        valError = nil
-        
-        do {
-            guard let category = selectedCategories[transactionType] else { throw AppError.missingCategory }
-            guard amount > 0 else { throw AppError.invalidAmount }
-            
-            let trimmedName = payeeName.trimmingCharacters(in: .whitespacesAndNewlines)
-            
-            item.amount = amount
-            item.category = category
-            item.desc = desc.isEmpty ? nil : desc
-            item.payee = trimmedName.isEmpty ? nil : payeeViewModel.getOrCreatePayee(context: context, name: trimmedName)
-            item.date = date
-            item.isRecurring = isRecurring
-            
-            try context.save()
+            if let editingTrsn = trsnToEdit {
+                editingTrsn.amount = amount
+                editingTrsn.category = category
+                editingTrsn.desc = desc.isEmpty ? nil : desc
+                editingTrsn.payee = payee
+                editingTrsn.date = date
+                editingTrsn.isRecurring = isRecurring
+                
+                try context.save()
+            } else {
+                let newTransaction = Transaction(amount: amount, category: category, desc: desc.isEmpty ? nil : desc, payee: payee, date: date, isRecurring: isRecurring)
+                
+                context.insert(newTransaction)
+            }
             return true
         } catch let error as AppError {
             valError = error
@@ -143,16 +122,24 @@ import SwiftData
         context.delete(item)
     }
     
-    func duplicateTransaction(item: Transaction) {
+    func loadTransaction(trsn: Transaction, forEditing: Bool) {
         resetForm()
         
-        amount = item.amount
-        transactionType = item.category.transactionType
-        selectedCategories = [transactionType: item.category]
-        desc = item.desc ?? ""
-        payeeName = item.payee?.name ?? ""
-        date = item.date
-        isRecurring = item.isRecurring
+        amount = trsn.amount
+        transactionType = trsn.category.transactionType
+        selectedCategories = [transactionType: trsn.category]
+        desc = trsn.desc ?? ""
+        payeeName = trsn.payee?.name ?? ""
+        date = trsn.date
+        isRecurring = trsn.isRecurring
+        
+        if forEditing {
+            isEdit = true
+            trsnToEdit = trsn
+        } else {
+            isEdit = false
+            trsnToEdit = nil
+        }
     }
     
     func resetForm() {
@@ -163,6 +150,9 @@ import SwiftData
         payeeName = ""
         date = Date()
         isRecurring = false
+        
+        isEdit = false
+        trsnToEdit = nil
     }
     
     func getTransactionsByMonth(transactions: [Transaction]) {

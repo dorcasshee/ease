@@ -44,7 +44,7 @@ struct RecordExpenseView: View {
             RecordExpenseBodyView(categoryVM: categoryVM, transactionVM: transactionVM)
             
             Button {
-                if transactionVM.createTransaction(context: context) {
+                if transactionVM.saveTransaction(context: context) {
                     dismiss()
                 }
             } label: {
@@ -55,7 +55,7 @@ struct RecordExpenseView: View {
             .padding(.bottom, 5)
             
             Button {
-                if transactionVM.createTransaction(context: context) {
+                if transactionVM.saveTransaction(context: context) {
                     transactionVM.resetForm()
                 }
             } label: {

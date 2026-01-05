@@ -22,7 +22,7 @@ struct BalanceCardView: View {
 
             BalanceItemView(amount: transactionVM.currentMonthBalance, label: "Balance", useSmallFont: transactionVM.isSmallerSummary)
         }
-        .padding(.horizontal, 30)
+        .padding(.horizontal, 25)
         .padding(.vertical)
         .background {
             RoundedRectangle(cornerRadius: 12)
