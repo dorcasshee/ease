@@ -26,13 +26,17 @@ import SwiftData
     var showError: Bool = false
     var valError: AppError?
     
+    var currentDate: Date = Date()
+    var currentMonthTransactions: [Transaction] = []
+    
     var showSheet: Bool = false
     
     var isEdit: Bool = false
     var trsnToEdit: Transaction? = nil
     
-    var currentDate: Date = Date()
-    var currentMonthTransactions: [Transaction] = []
+    var descSuggestions: [String] = []
+    var showSuggestions: Bool = false
+    var isSuggestionSelected: Bool = false
     
     // computed properties
     var category: TransactionCategory? {
@@ -76,11 +80,13 @@ import SwiftData
         }
     }
     
+    // init
     init() {
         self.payeeViewModel = PayeeViewModel()
         self.date = Date()
     }
     
+    // functions
     func saveTransaction(context: ModelContext) -> Bool {
         showError = false
         valError = nil
@@ -150,7 +156,7 @@ import SwiftData
         payeeName = ""
         date = Date()
         isRecurring = false
-        
+
         isEdit = false
         trsnToEdit = nil
     }
@@ -159,6 +165,27 @@ import SwiftData
         currentMonthTransactions = transactions.filter { transaction in
             Calendar.current.isDate(transaction.date, equalTo: currentDate, toGranularity: .month)
         }
+    }
+    
+    func getDescSuggestions(for searchText: String) {
+        if isSuggestionSelected {
+            isSuggestionSelected = false
+            descSuggestions = []
+            return
+        }
+        
+        guard !searchText.isEmpty else {
+            descSuggestions = []
+            return
+        }
+        
+        let uniqueDesc = Set(currentMonthTransactions.compactMap{ $0.desc })
+
+        descSuggestions = uniqueDesc
+            .filter { $0.localizedCaseInsensitiveContains(searchText) }
+            .sorted()
+            .prefix(3)
+            .map { String($0) }
     }
     
     func incrementDate() {

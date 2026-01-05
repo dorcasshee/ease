@@ -65,6 +65,33 @@ struct RecordExpenseView: View {
             
             Spacer()
         }
+        .overlay(alignment: .top) {
+            if !transactionVM.descSuggestions.isEmpty {
+                VStack {
+                    ForEach(transactionVM.descSuggestions, id: \.self) { desc in
+                        Button {
+                            transactionVM.desc = desc
+                            transactionVM.isSuggestionSelected = true
+                        } label: {
+                            AutocompleteRowView(text: desc)
+                        }
+                        
+                        if desc != transactionVM.descSuggestions.last {
+                            CustomDivider()
+                                .padding(.vertical, 5)
+                        }
+                    }
+                }
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background {
+                    RoundedRectangle(cornerRadius: 20)
+                        .foregroundStyle(Color(.secondarySystemBackground))
+                        .shadow(color: .eBlack.opacity(0.1), radius: 5, x: 5, y: 5)
+                }
+                .offset(y: 430)
+            }
+        }
         .padding()
         .alert(transactionVM.valError?.errorTitle ?? "Error", isPresented: $transactionVM.showError) {
             Button("OK", role: .cancel) {}
@@ -142,6 +169,8 @@ struct RecordExpenseBodyView: View {
     @Bindable var categoryVM: CategoryViewModel
     @Bindable var transactionVM: TransactionViewModel
     
+    @FocusState private var isInputActive: Bool
+    
     var body: some View {
         VStack(spacing: 20) {
             CustomDivider()
@@ -180,9 +209,13 @@ struct RecordExpenseBodyView: View {
             
             HStack {
                 Image(systemName: "line.3.horizontal")
-                
-                TextField("Description", text: $transactionVM.desc) {}
+
+                TextField("Description", text: $transactionVM.desc)
+                    .focused($isInputActive)
                     .font(.headline).fontWeight(.regular)
+                    .onChange(of: transactionVM.desc) { _, newValue in
+                        transactionVM.getDescSuggestions(for: newValue)
+                    }
             }
             
             CustomDivider()
@@ -194,6 +227,20 @@ struct RecordExpenseBodyView: View {
         .padding(.top, 10)
         .padding(.bottom, 25)
         .padding(.horizontal, 10)
+    }
+}
+
+struct AutocompleteRowView: View {
+    var text: String
+    
+    var body: some View {
+        HStack {
+            Text(text)
+                .foregroundStyle(.eBlack)
+                .font(.subheadline)
+            
+            Spacer()
+        }
     }
 }
 

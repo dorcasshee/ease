@@ -60,6 +60,9 @@ struct TransactionListView: View {
             .scrollBounceBehavior(.basedOnSize)
             .padding(.horizontal, 10)
             .contentMargins(.top, 0, for: .scrollContent)
+            .safeAreaInset(edge: .bottom) {
+                Color.clear.frame(height: 40)
+            }
             .sheet(isPresented: $transactionVM.showSheet) {
                 RecordExpenseView(transactionVM: transactionVM)
             }
