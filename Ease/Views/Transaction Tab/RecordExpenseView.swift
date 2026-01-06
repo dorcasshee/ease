@@ -43,25 +43,29 @@ struct RecordExpenseView: View {
             
             RecordExpenseBodyView(categoryVM: categoryVM, transactionVM: transactionVM)
             
-            Button {
-                if transactionVM.saveTransaction(context: context) {
-                    dismiss()
+            VStack {
+                Button {
+                    if transactionVM.saveTransaction(context: context) {
+                        dismiss()
+                    }
+                } label: {
+                    Text("Save")
+                        .frame(maxWidth: .infinity)
+                        .blackButtonStyle()
                 }
-            } label: {
-                Text("Save")
-                    .blackButtonStyle(horizontalPadding: 80)
-                    
-            }
-            .padding(.bottom, 5)
-            
-            Button {
-                if transactionVM.saveTransaction(context: context) {
-                    transactionVM.resetForm()
+                .padding(.bottom, 5)
+                
+                Button {
+                    if transactionVM.saveTransaction(context: context) {
+                        transactionVM.resetForm()
+                    }
+                } label: {
+                    Text("Save & Add Another")
+                        .frame(maxWidth: .infinity)
+                        .blackButtonStyle()
                 }
-            } label: {
-                Text("Save & Add Another")
-                    .blackButtonStyle()
             }
+            .fixedSize(horizontal: true, vertical: false)
             
             Spacer()
         }
@@ -143,7 +147,6 @@ struct DismissButton: View {
 }
 
 struct BlackButtonStyle: ViewModifier {
-    let horizontalPadding: CGFloat
     let font: Font
     
     func body(content: Content) -> some View {
@@ -151,7 +154,7 @@ struct BlackButtonStyle: ViewModifier {
             .font(font)
             .foregroundStyle(.eWhite)
             .padding(.vertical, 10)
-            .padding(.horizontal, horizontalPadding)
+            .padding(.horizontal)
             .background {
                 Capsule()
                     .foregroundStyle(.eBlack)
@@ -161,7 +164,7 @@ struct BlackButtonStyle: ViewModifier {
 
 extension View {
     func blackButtonStyle(horizontalPadding: CGFloat = 20, font: Font = .headline) -> some View {
-        modifier(BlackButtonStyle(horizontalPadding: horizontalPadding, font: font))
+        modifier(BlackButtonStyle(font: font))
     }
 }
 
