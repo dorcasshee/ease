@@ -34,6 +34,8 @@ import SwiftData
     var isEdit: Bool = false
     var trsnToEdit: Transaction? = nil
     
+    var suggestions: [String] = []
+    var payeeSuggestions: [String] = []
     var descSuggestions: [String] = []
     var showSuggestions: Bool = false
     var isSuggestionSelected: Bool = false
@@ -159,6 +161,7 @@ import SwiftData
 
         isEdit = false
         trsnToEdit = nil
+        suggestions = []
     }
     
     func getTransactionsByMonth(transactions: [Transaction]) {
@@ -167,21 +170,19 @@ import SwiftData
         }
     }
     
-    func getDescSuggestions(for searchText: String) {
+    func getAutocompleteSuggestions(for searchText: String, from items: [String]) -> [String]{
         if isSuggestionSelected {
             isSuggestionSelected = false
-            descSuggestions = []
-            return
+            return []
         }
         
         guard !searchText.isEmpty else {
-            descSuggestions = []
-            return
+            return []
         }
         
-        let uniqueDesc = Set(currentMonthTransactions.compactMap{ $0.desc })
-
-        descSuggestions = uniqueDesc
+        let uniqueItems = Set(items)
+        
+        return uniqueItems
             .filter { $0.localizedCaseInsensitiveContains(searchText) }
             .sorted()
             .prefix(3)

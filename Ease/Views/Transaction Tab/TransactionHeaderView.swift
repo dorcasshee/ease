@@ -26,6 +26,7 @@ struct TransactionHeaderView: View {
             
             CustomDivider()
         }
+        .padding(10)
         .background(.eWhite)
     }
 }

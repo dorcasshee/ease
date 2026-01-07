@@ -24,6 +24,7 @@ struct TabBarView: View {
                 SettingsTab()
             }
         }
+        .tint(.eBlack)
     }
 }
 

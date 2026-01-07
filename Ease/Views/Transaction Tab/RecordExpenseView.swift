@@ -43,60 +43,10 @@ struct RecordExpenseView: View {
             
             RecordExpenseBodyView(categoryVM: categoryVM, transactionVM: transactionVM)
             
-            VStack {
-                Button {
-                    if transactionVM.saveTransaction(context: context) {
-                        dismiss()
-                    }
-                } label: {
-                    Text("Save")
-                        .frame(maxWidth: .infinity)
-                        .blackButtonStyle()
-                }
-                .padding(.bottom, 5)
-                
-                Button {
-                    if transactionVM.saveTransaction(context: context) {
-                        transactionVM.resetForm()
-                    }
-                } label: {
-                    Text("Save & Add Another")
-                        .frame(maxWidth: .infinity)
-                        .blackButtonStyle()
-                }
-            }
-            .fixedSize(horizontal: true, vertical: false)
-            
             Spacer()
         }
-        .overlay(alignment: .top) {
-            if !transactionVM.descSuggestions.isEmpty {
-                VStack {
-                    ForEach(transactionVM.descSuggestions, id: \.self) { desc in
-                        Button {
-                            transactionVM.desc = desc
-                            transactionVM.isSuggestionSelected = true
-                        } label: {
-                            AutocompleteRowView(text: desc)
-                        }
-                        
-                        if desc != transactionVM.descSuggestions.last {
-                            CustomDivider()
-                                .padding(.vertical, 5)
-                        }
-                    }
-                }
-                .padding()
-                .frame(maxWidth: .infinity)
-                .background {
-                    RoundedRectangle(cornerRadius: 20)
-                        .foregroundStyle(Color(.secondarySystemBackground))
-                        .shadow(color: .eBlack.opacity(0.1), radius: 5, x: 5, y: 5)
-                }
-                .offset(y: 430)
-            }
-        }
         .padding()
+        .dismissKeyboardOnTap()
         .alert(transactionVM.valError?.errorTitle ?? "Error", isPresented: $transactionVM.showError) {
             Button("OK", role: .cancel) {}
         } message: {
@@ -166,13 +116,62 @@ extension View {
     func blackButtonStyle(horizontalPadding: CGFloat = 20, font: Font = .headline) -> some View {
         modifier(BlackButtonStyle(font: font))
     }
+    
+    func dismissKeyboardOnTap() -> some View {
+        self
+            .contentShape(Rectangle())
+            .onTapGesture {
+                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+            }
+    }
+}
+
+struct SaveButtonsView: View {
+    @Environment(\.modelContext) private var context
+    @Environment(\.dismiss) private var dismiss
+    
+    @Bindable var transactionVM: TransactionViewModel
+    @Bindable var categoryVM: CategoryViewModel
+    
+    var body: some View {
+        VStack {
+            Button {
+                if transactionVM.saveTransaction(context: context) {
+                    dismiss()
+                }
+            } label: {
+                Text("Save")
+                    .frame(maxWidth: .infinity)
+                    .blackButtonStyle()
+            }
+            .padding(.bottom, 5)
+
+            Button {
+                if transactionVM.saveTransaction(context: context) {
+                    transactionVM.resetForm()
+                    transactionVM.selectedCategories[transactionVM.transactionType] = try? categoryVM.getDefaultCategory(for: transactionVM.transactionType, context: context)
+                }
+            } label: {
+                Text("Save & Add Another")
+                    .frame(maxWidth: .infinity)
+                    .blackButtonStyle()
+            }
+        }
+        .fixedSize(horizontal: true, vertical: false)
+    }
 }
 
 struct RecordExpenseBodyView: View {
+    @Environment(\.modelContext) private var context
+    
     @Bindable var categoryVM: CategoryViewModel
     @Bindable var transactionVM: TransactionViewModel
     
-    @FocusState private var isInputActive: Bool
+    @Query private var transactions: [Transaction]
+    @Query private var payees: [Payee]
+    
+    @FocusState private var isPayeeInputActive: Bool
+    @FocusState private var isDescInputActive: Bool
     
     var body: some View {
         VStack(spacing: 20) {
@@ -203,21 +202,24 @@ struct RecordExpenseBodyView: View {
                     .font(.headline)
                     .foregroundStyle(.eBlack)
                 
-                TextField(text: $transactionVM.payeeName) {
-                    Text("Entity")
-                }
+                TextField("Entity", text: $transactionVM.payeeName)
+                    .focused($isPayeeInputActive)
+                    .font(.headline).fontWeight(.regular)
+                    .onChange(of: transactionVM.payeeName) { _, newValue in
+                        transactionVM.payeeSuggestions = transactionVM.getAutocompleteSuggestions(for: newValue, from: payees.compactMap { $0.name })
+                    }
             }
             
             CustomDivider()
             
             HStack {
                 Image(systemName: "line.3.horizontal")
-
+                
                 TextField("Description", text: $transactionVM.desc)
-                    .focused($isInputActive)
+                    .focused($isDescInputActive)
                     .font(.headline).fontWeight(.regular)
                     .onChange(of: transactionVM.desc) { _, newValue in
-                        transactionVM.getDescSuggestions(for: newValue)
+                        transactionVM.descSuggestions = transactionVM.getAutocompleteSuggestions(for: newValue, from: transactions.compactMap { $0.desc })
                     }
             }
             
@@ -226,10 +228,69 @@ struct RecordExpenseBodyView: View {
             DateRowView(transactionVM: transactionVM)
             
             CustomDivider()
+                .padding(.bottom, 15)
+            
+            SaveButtonsView(transactionVM: transactionVM, categoryVM: categoryVM)
         }
         .padding(.top, 10)
         .padding(.bottom, 25)
         .padding(.horizontal, 10)
+        .overlay(alignment: .top) {
+            if isPayeeInputActive && !transactionVM.payeeSuggestions.isEmpty {
+                VStack {
+                    ForEach(transactionVM.payeeSuggestions, id: \.self) { name in
+                        Button {
+                            transactionVM.payeeName = name
+                            transactionVM.isSuggestionSelected = true
+                            transactionVM.payeeSuggestions = []
+                        } label: {
+                            AutocompleteRowView(text: name)
+                        }
+                        
+                        if name != transactionVM.payeeSuggestions.last {
+                            CustomDivider()
+                                .padding(.vertical, 5)
+                        }
+                    }
+                }
+                .padding()
+                .background {
+                    RoundedRectangle(cornerRadius: 20)
+                        .foregroundStyle(Color(.secondarySystemBackground))
+                        .shadow(color: .eBlack.opacity(0.1), radius: 5, x: 5, y: 5)
+                }
+                .frame(maxWidth: .infinity)
+                .offset(y: 138)
+            }
+            
+            
+            if isDescInputActive && !transactionVM.descSuggestions.isEmpty {
+                VStack {
+                    ForEach(transactionVM.descSuggestions, id: \.self) { desc in
+                        Button {
+                            transactionVM.desc = desc
+                            transactionVM.isSuggestionSelected = true
+                            transactionVM.descSuggestions = []
+                        } label: {
+                            AutocompleteRowView(text: desc)
+                        }
+                        
+                        if desc != transactionVM.descSuggestions.last {
+                            CustomDivider()
+                                .padding(.vertical, 5)
+                        }
+                    }
+                }
+                .padding()
+                .background {
+                    RoundedRectangle(cornerRadius: 20)
+                        .foregroundStyle(Color(.secondarySystemBackground))
+                        .shadow(color: .eBlack.opacity(0.1), radius: 5, x: 5, y: 5)
+                }
+                .frame(maxWidth: .infinity)
+                .offset(y: 205)
+            }
+        }
     }
 }
 

@@ -28,6 +28,7 @@ struct TransactionTab: View {
             SearchFilterRowView()
             
             TransactionListView(transactionVM: transactionVM, transactions: transactions)
+                .padding(.horizontal, -10)
                 .overlay(alignment: .bottomTrailing) {
                     Button {
                         transactionVM.showSheet = true
@@ -46,8 +47,6 @@ struct TransactionTab: View {
                         RecordExpenseView(transactionVM: transactionVM)
                     }
                 }
-            
-            Spacer()
         }
         .padding()
         .onAppear {
@@ -89,7 +88,8 @@ struct SearchFilterRowView: View {
                     .foregroundStyle(.eBlack)
             }
         }
-        .padding()
+        .padding(.horizontal)
+        .padding(.top)
     }
 }
 

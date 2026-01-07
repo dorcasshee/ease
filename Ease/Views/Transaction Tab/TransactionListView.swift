@@ -28,8 +28,8 @@ struct TransactionListView: View {
                             TransactionRowView(transaction: transaction)
                         }
                         .listRowSeparator(.hidden)
-                        .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 10, trailing: 0))
                         .listRowBackground(Color.clear)
+                        .listRowInsets(EdgeInsets(top: 10, leading: 10, bottom: 5, trailing: 10))
                         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                             Button(role: .destructive) {
                                 transactionVM.deleteTransaction(context: context, item: transaction)
@@ -44,14 +44,14 @@ struct TransactionListView: View {
                             } label: {
                                 Label("Duplicate", systemImage: "document.on.document")
                             }
-                            .tint(Color.eBlue)
+                            .tint(.accent)
                         }
                     }
                 } header: {
                     TransactionHeaderView(date: section.formattedDate, amount: section.formattedTotal)
-                        .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 13, trailing: 0))
+                        .listRowInsets(EdgeInsets())
                 }
-                .listSectionSpacing(25)
+                .listSectionSpacing(30)
                 .listSectionSeparator(.hidden)
             }
             .listStyle(.plain)
