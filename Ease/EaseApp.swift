@@ -48,10 +48,10 @@ extension ModelContainer {
         // food
         let food = TransactionCategory(name: "Food", iconName: "fork.knife", transactionType: .expense)
         context.insert(food)
-        let groceries = TransactionCategory(name: "Groceries", iconName: "cart.circle", transactionType: .expense, parentCategory: food)
+        let groceries = TransactionCategory(name: "Groceries", iconName: "carrot", transactionType: .expense, parentCategory: food)
         context.insert(groceries)
         context.insert(TransactionCategory(name: "Drinks", iconName: "cup.and.saucer", transactionType: .expense, parentCategory: food))
-        context.insert(TransactionCategory(name: "Food", iconName: "wineglass", isDefault: true, transactionType: .expense, parentCategory: food))
+        context.insert(TransactionCategory(name: "Food", iconName: "fork.knife", isDefault: true, transactionType: .expense, parentCategory: food))
         let takeout = TransactionCategory(name: "Takeout", iconName: "takeoutbag.and.cup.and.straw", transactionType: .expense, parentCategory: food)
         context.insert(takeout)
         context.insert(TransactionCategory(name: "Snacks", iconName: "spoon.serving", transactionType: .expense, parentCategory: food))

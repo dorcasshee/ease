@@ -18,11 +18,16 @@ struct MonthPickerView: View {
                 Image(systemName: "chevron.left")
                     .foregroundStyle(.eBlack)
             }
+            .sensoryFeedback(.selection, trigger: transactionVM.currentDate)
             
             Spacer()
             
-            Text(transactionVM.currentDate, format: .dateTime.month(.wide).year())
-                .blackButtonStyle(font: .title3.weight(.bold))
+            Button {
+                // TODO: MONTH PICKER D:
+            } label: {
+                Text(transactionVM.currentDate, format: .dateTime.month(.wide).year())
+                    .blackButtonStyle(font: .title3.weight(.bold))
+            }
             
             Spacer()
             
