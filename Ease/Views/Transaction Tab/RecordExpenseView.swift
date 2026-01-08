@@ -17,30 +17,50 @@ struct RecordExpenseView: View {
     @State private var categoryVM = CategoryViewModel()
     @Bindable var transactionVM: TransactionViewModel
     
+    @FocusState private var isAmountFocused: Bool
+    
     var body: some View {
         VStack {
-            DismissButton()
-            
-            Text("New Transaction")
-                .font(.headline).fontWeight(.regular)
-            
-            TextField("$0.00", value: $transactionVM.amount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
-                .font(.system(size: 50, weight: .bold))
-                .keyboardType(.decimalPad)
-                .multilineTextAlignment(.center)
-                .padding()
-            
-            Picker("Select transaction type", selection: $transactionVM.transactionType) { // expense, income, transfer, investment
-                ForEach(TransactionType.allCases) { type in
-                    Text(type.rawValue.capitalized)
-                        .tag(type)
+            VStack {
+                DismissButton()
+                
+                Text("New Transaction")
+                    .font(.headline).fontWeight(.regular)
+                
+                TextField("$0.00", value: $transactionVM.amount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
+                    .font(.system(size: 50, weight: .bold))
+                    .keyboardType(.decimalPad)
+                    .multilineTextAlignment(.center)
+                    .padding()
+                    .focused($isAmountFocused)
+                    .toolbar {
+                        ToolbarItemGroup(placement: .keyboard) {
+                            Spacer()
+                            Button {
+                                isAmountFocused = false
+                            } label: {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .symbolRenderingMode(.palette)
+                                    .foregroundStyle(Color(.systemGray2), Color(.secondarySystemBackground))
+                                    .frame(width: 32)
+                            }
+                        }
+                    }
+                
+                Picker("Select transaction type", selection: $transactionVM.transactionType) { // expense, income, transfer, investment
+                    ForEach(TransactionType.allCases) { type in
+                        Text(type.rawValue.capitalized)
+                            .tag(type)
+                    }
                 }
+                .pickerStyle(.segmented)
+                .padding(.horizontal)
+                .padding(.bottom)
+                .frame(width: 250)
             }
-            .pickerStyle(.segmented)
-            .padding(.horizontal)
-            .padding(.bottom)
-            .frame(width: 250)
-            
+            		
             RecordExpenseBodyView(categoryVM: categoryVM, transactionVM: transactionVM)
             
             Spacer()
@@ -53,6 +73,7 @@ struct RecordExpenseView: View {
             Text(transactionVM.valError?.errorMessage ?? "An unexpected error has occurred. Please try again.")
         }
         .onAppear {
+            isAmountFocused = true
             if transactionVM.category == nil {
                 transactionVM.selectedCategories[transactionVM.transactionType] = try? categoryVM.getDefaultCategory(for: transactionVM.transactionType, context: context)
             }
@@ -204,6 +225,7 @@ struct RecordExpenseBodyView: View {
                 
                 TextField("Entity", text: $transactionVM.payeeName)
                     .focused($isPayeeInputActive)
+                    .autocorrectionDisabled(false)
                     .font(.headline).fontWeight(.regular)
                     .onChange(of: transactionVM.payeeName) { _, newValue in
                         transactionVM.payeeSuggestions = transactionVM.getAutocompleteSuggestions(for: newValue, from: payees.compactMap { $0.name })
@@ -217,6 +239,7 @@ struct RecordExpenseBodyView: View {
                 
                 TextField("Description", text: $transactionVM.desc)
                     .focused($isDescInputActive)
+                    .autocorrectionDisabled(false)
                     .font(.headline).fontWeight(.regular)
                     .onChange(of: transactionVM.desc) { _, newValue in
                         transactionVM.descSuggestions = transactionVM.getAutocompleteSuggestions(for: newValue, from: transactions.compactMap { $0.desc })
@@ -260,9 +283,8 @@ struct RecordExpenseBodyView: View {
                         .shadow(color: .eBlack.opacity(0.1), radius: 5, x: 5, y: 5)
                 }
                 .frame(maxWidth: .infinity)
-                .offset(y: 138)
+                .offset(y: 140)
             }
-            
             
             if isDescInputActive && !transactionVM.descSuggestions.isEmpty {
                 VStack {
@@ -288,8 +310,8 @@ struct RecordExpenseBodyView: View {
                         .shadow(color: .eBlack.opacity(0.1), radius: 5, x: 5, y: 5)
                 }
                 .frame(maxWidth: .infinity)
-                .offset(y: 205)
-            }
+                .offset(y: 203)
+            }	
         }
     }
 }

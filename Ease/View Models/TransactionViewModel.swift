@@ -14,7 +14,7 @@ import SwiftData
      */
     
     private var payeeViewModel: PayeeViewModel
-    var amount: Double = 0
+    var amount: Double? = nil
     var isSelected: Bool = false
     var date: Date
     var transactionType: TransactionType = .expense
@@ -95,7 +95,7 @@ import SwiftData
         
         do {
             guard let category = selectedCategories[transactionType] else { throw AppError.missingCategory }
-            guard amount > 0 else { throw AppError.invalidAmount }
+            guard let amount = amount, amount > 0 else { throw AppError.invalidAmount }
             
             let trimmedName = payeeName.trimmingCharacters(in: .whitespacesAndNewlines)
             let payee = trimmedName.isEmpty ? nil : payeeViewModel.getOrCreatePayee(context: context, name: trimmedName)
@@ -151,7 +151,7 @@ import SwiftData
     }
     
     func resetForm() {
-        amount = 0
+        amount = nil
         transactionType = .expense
         selectedCategories.removeAll()
         desc = ""
@@ -161,7 +161,8 @@ import SwiftData
 
         isEdit = false
         trsnToEdit = nil
-        suggestions = []
+        payeeSuggestions = []
+        descSuggestions = []
     }
     
     func getTransactionsByMonth(transactions: [Transaction]) {

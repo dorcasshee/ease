@@ -27,7 +27,7 @@ struct CategorySheetView: View {
                 Spacer()
             }
             
-            // search bar
+            // TODO: search bar
             
             ScrollView {
                 ForEach(categoryVM.getParentCategories(categories: categories, transactionType: transactionVM.transactionType)) { parent in
@@ -45,6 +45,7 @@ struct CategorySheetView: View {
                         }
                         .padding(.bottom)
                     } header: {
+                        // TODO: STICKY HEADERS
                         CategoryHeaderView(name: parent.name, iconName: parent.iconName, count: parent.subCategories.count)
                     }
                     .padding(.bottom, 10)
@@ -108,7 +109,7 @@ struct CategoryButtonView: View {
             CategoryIconView(imageName: imageName, color: color)
             
             Text(categoryName)
-                .font(.caption)
+                .font(.callout)
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.eBlack)
             

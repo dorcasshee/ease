@@ -57,9 +57,9 @@ extension TransactionCategory {
         // food
         let food = TransactionCategory(name: "Food", iconName: "fork.knife", transactionType: .expense)
         context.insert(food)
-        context.insert(TransactionCategory(name: "Groceries", iconName: "cart", transactionType: .expense, parentCategory: food))
+        context.insert(TransactionCategory(name: "Groceries", iconName: "carrot", transactionType: .expense, parentCategory: food))
         context.insert(TransactionCategory(name: "Drinks", iconName: "cup.and.saucer", transactionType: .expense, parentCategory: food))
-        context.insert(TransactionCategory(name: "Food", iconName: "wineglass", isDefault: true, transactionType: .expense, parentCategory: food))
+        context.insert(TransactionCategory(name: "Food", iconName: "fork.knife", isDefault: true, transactionType: .expense, parentCategory: food))
         context.insert(TransactionCategory(name: "Takeout", iconName: "takeoutbag.and.cup.and.straw", transactionType: .expense, parentCategory: food))
         context.insert(TransactionCategory(name: "Snacks", iconName: "spoon.serving", transactionType: .expense, parentCategory: food))
         context.insert(TransactionCategory(name: "Food Delivery", iconName: "motorcycle", transactionType: .expense, parentCategory: food))
