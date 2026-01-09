@@ -45,7 +45,7 @@ struct CategorySheetView: View {
                         }
                         .padding(.bottom)
                     } header: {
-                        // TODO: STICKY HEADERS
+                        // TODO: STICKY HEADERS (maybe swap to List + LazyVGrid then searchable for search bar in category sheet)
                         CategoryHeaderView(name: parent.name, iconName: parent.iconName, count: parent.subCategories.count)
                     }
                     .padding(.bottom, 10)
@@ -72,7 +72,8 @@ struct CategoryHeaderView: View {
         VStack {
             HStack(alignment: .top) {
                 Label(name, systemImage: iconName)
-                    .font(.title3.bold())
+                    .font(.title3)
+                    .fontWeight(.bold)
                     .foregroundStyle(.eBlack)
                 
                 Spacer()

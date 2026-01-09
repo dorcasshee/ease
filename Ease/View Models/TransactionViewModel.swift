@@ -33,6 +33,7 @@ import SwiftData
     
     var isEdit: Bool = false
     var trsnToEdit: Transaction? = nil
+    var trsnMode: TransactionMode = .create
     
     var suggestions: [String] = []
     var payeeSuggestions: [String] = []
@@ -82,6 +83,10 @@ import SwiftData
         }
     }
     
+    enum TransactionMode: Equatable {
+        case create, update
+    }
+    
     // init
     init() {
         self.payeeViewModel = PayeeViewModel()
@@ -100,7 +105,10 @@ import SwiftData
             let trimmedName = payeeName.trimmingCharacters(in: .whitespacesAndNewlines)
             let payee = trimmedName.isEmpty ? nil : payeeViewModel.getOrCreatePayee(context: context, name: trimmedName)
             
-            if let editingTrsn = trsnToEdit {
+            if trsnMode == .create {
+                let newTransaction = Transaction(amount: amount, category: category, desc: desc.isEmpty ? nil : desc, payee: payee, date: date, isRecurring: isRecurring)
+                context.insert(newTransaction)
+            } else if trsnMode == .update, let editingTrsn = trsnToEdit {
                 editingTrsn.amount = amount
                 editingTrsn.category = category
                 editingTrsn.desc = desc.isEmpty ? nil : desc
@@ -109,11 +117,8 @@ import SwiftData
                 editingTrsn.isRecurring = isRecurring
                 
                 try context.save()
-            } else {
-                let newTransaction = Transaction(amount: amount, category: category, desc: desc.isEmpty ? nil : desc, payee: payee, date: date, isRecurring: isRecurring)
-                
-                context.insert(newTransaction)
             }
+
             return true
         } catch let error as AppError {
             valError = error
@@ -142,6 +147,7 @@ import SwiftData
         isRecurring = trsn.isRecurring
         
         if forEditing {
+            trsnMode = .update
             isEdit = true
             trsnToEdit = trsn
         } else {
@@ -161,6 +167,7 @@ import SwiftData
 
         isEdit = false
         trsnToEdit = nil
+        trsnMode = .create
         payeeSuggestions = []
         descSuggestions = []
     }

@@ -32,6 +32,7 @@ struct TransactionTab: View {
                 .overlay(alignment: .bottomTrailing) {
                     Button {
                         transactionVM.showSheet = true
+                        transactionVM.trsnMode = .create
                     } label: {
                         ZStack {
                             Circle()

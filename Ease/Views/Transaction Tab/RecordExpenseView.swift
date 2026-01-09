@@ -30,61 +30,40 @@ struct RecordExpenseView: View {
     }
     
     var body: some View {
-        NavigationStack {
+        ScrollViewReader { proxy in
             ScrollView {
-                VStack {
-                    DismissButton()
-                    
-                    Text("New Transaction")
-                        .font(.headline).fontWeight(.regular)
-                    
-                    TextField("$0.00", value: $transactionVM.amount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
-                        .focused($focusedField, equals: .amount)
-                        .font(.system(size: 50, weight: .bold))
-                        .keyboardType(.decimalPad)
-                        .multilineTextAlignment(.center)
-                        .padding()
-                        .submitLabel(.done)
-                        .toolbar {
-                            if focusedField == .amount {
-                                ToolbarItemGroup(placement: .keyboard) {
-                                    Spacer()
-                                    Button("Done") {
-                                        focusedField = nil
-                                    }
-                                    .font(.subheadline)
-                                    .fontWeight(.bold)
-                                    .foregroundStyle(.eBlack)
-                                }
-                            }
-                        }
-                    
-                    Picker("Select transaction type", selection: $transactionVM.transactionType) { // expense, income, transfer, investment
-                        ForEach(TransactionType.allCases) { type in
-                            Text(type.rawValue.capitalized)
-                                .tag(type)
-                        }
+                DismissButton()
+                
+                Text( transactionVM.trsnMode == .create ? "New Transaction" : "Edit Transaction")
+                    .font(.headline).fontWeight(.regular)
+                
+                TextField("$0.00", value: $transactionVM.amount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
+                    .focused($focusedField, equals: .amount)
+                    .font(.system(size: 50, weight: .bold))
+                    .keyboardType(.decimalPad)
+                    .multilineTextAlignment(.center)
+                    .padding()
+                    .id("amount")
+                    .minimumScaleFactor(0.6)
+                
+                Picker("Select transaction type", selection: $transactionVM.transactionType) {
+                    ForEach(TransactionType.allCases) { type in
+                        Text(type.rawValue.capitalized)
+                            .tag(type)
                     }
-                    .pickerStyle(.segmented)
-                    .tint(Color(.secondarySystemBackground))
-                    .padding(.horizontal)
-                    .padding(.bottom)
-                    .frame(width: 250)
-                            
-                    RecordExpenseBodyView(categoryVM: categoryVM, transactionVM: transactionVM, focusedField: $focusedField)
-                    
-                    Spacer()
                 }
-                .offset(y: fieldOffset)
-                .animation(.easeInOut(duration: 0.3), value: focusedField)
+                .pickerStyle(.segmented)
+                .padding(.horizontal)
+                .padding(.bottom)
+                .frame(width: 250) // change tint to match autocomplete suggestions
+                
+                RecordExpenseBodyView(categoryVM: categoryVM, transactionVM: transactionVM, focusedField: $focusedField)
             }
-            .scrollDisabled(true)
             .scrollIndicators(.hidden)
-            .scrollDismissesKeyboard(.interactively)
+            .scrollBounceBehavior(.basedOnSize)
         }
         .padding(.top)
         .padding(.horizontal)
-        .ignoresSafeArea(.keyboard)
         .dismissKeyboardOnTap()
         .alert(transactionVM.valError?.errorTitle ?? "Error", isPresented: $transactionVM.showError) {
             Button("OK", role: .cancel) {}
@@ -92,7 +71,9 @@ struct RecordExpenseView: View {
             Text(transactionVM.valError?.errorMessage ?? "An unexpected error has occurred. Please try again.")
         }
         .onAppear {
-            focusedField = .amount
+            if transactionVM.trsnMode == .create {
+                focusedField = .amount
+            }
             
             if transactionVM.category == nil {
                 transactionVM.selectedCategories[transactionVM.transactionType] = try? categoryVM.getDefaultCategory(for: transactionVM.transactionType, context: context)
@@ -106,6 +87,87 @@ struct RecordExpenseView: View {
         .onDisappear {
             transactionVM.resetForm()
         }
+        .overlayPreferenceValue(BoundsPreferenceKey.self) { preferences in
+            GeometryReader { geometry in
+                if let field = focusedField, let anchor = preferences[field] {
+                    autocompleteDropdown(for: field, at: geometry[anchor])
+                }
+            }
+//            .animation(.easeInOut(duration: 0.3), value: focusedField)
+            .animation(.easeInOut(duration: 0.3), value: transactionVM.payeeSuggestions)
+            .animation(.easeInOut(duration: 0.3), value: transactionVM.descSuggestions)
+        }
+        .safeAreaInset(edge: .bottom) {
+            if focusedField == .amount {
+                HStack {
+                    Spacer()
+                    
+                    Button {
+                        focusedField = nil
+                    } label: {
+                        Image(systemName: "checkmark.circle.fill")
+                            .resizable()
+                            .scaledToFit()
+                            .foregroundStyle(.eBlack)
+                            .frame(width: 36)
+                            .padding()
+                    }
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func autocompleteDropdown(for field: FocusField, at frame: CGRect) -> some View {
+        let suggestions = (focusedField == .payee) ? transactionVM.payeeSuggestions :
+        (focusedField == .desc) ? transactionVM.descSuggestions : []
+        
+        if !suggestions.isEmpty {
+            VStack {
+                ForEach(suggestions, id: \.self) { item in
+                    Button {
+                        if field == .payee {
+                            transactionVM.payeeName = item
+                            transactionVM.payeeSuggestions = []
+                        } else if field == .desc {
+                            transactionVM.desc = item
+                            transactionVM.descSuggestions = []
+                        }
+                        
+                        transactionVM.isSuggestionSelected = true
+                    } label: {
+                        AutocompleteRowView(text: item)
+                    }
+                    
+                    if item != suggestions.last {
+                        CustomDivider()
+                            .padding(.vertical, 5)
+                    }
+                }
+            }
+            .padding()
+            .background {
+                RoundedRectangle(cornerRadius: 20)
+                    .foregroundStyle(Color(.secondarySystemBackground))
+                    .shadow(color: .eBlack.opacity(0.1), radius: 5, x: 5, y: 5)
+            }
+            .frame(width: frame.width + 3)
+            .offset(x: frame.minX - 3, y: frame.maxY + 7)
+            .transition(.asymmetric(
+                insertion: .opacity.combined(with: .slide),
+                removal: .opacity
+            ))
+        }
+    }
+}
+
+struct BoundsPreferenceKey: PreferenceKey {
+    typealias Value = [RecordExpenseView.FocusField: Anchor<CGRect>]
+    
+    static var defaultValue: Value = [:]
+    
+    static func reduce(value: inout Value, nextValue: () -> Value) {
+        value.merge(nextValue()) { $1 }
     }
 }
 
@@ -130,8 +192,9 @@ struct DismissButton: View {
     }
 }
 
-struct BlackButtonStyle: ViewModifier {
+struct RoundButtonStyle: ViewModifier {
     let font: Font
+    let color: Color
     
     func body(content: Content) -> some View {
         content
@@ -141,14 +204,14 @@ struct BlackButtonStyle: ViewModifier {
             .padding(.horizontal)
             .background {
                 Capsule()
-                    .foregroundStyle(.eBlack)
+                    .foregroundStyle(color)
             }
     }
 }
 
 extension View {
-    func blackButtonStyle(horizontalPadding: CGFloat = 20, font: Font = .headline) -> some View {
-        modifier(BlackButtonStyle(font: font))
+    func roundButtonStyle(font: Font = .headline, color: Color = .eBlack) -> some View {
+        modifier(RoundButtonStyle(font: font, color: color))
     }
     
     func dismissKeyboardOnTap() -> some View {
@@ -157,20 +220,6 @@ extension View {
             .onTapGesture {
                 UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
             }
-    }
-}
-
-struct AutocompleteRowView: View {
-    var text: String
-    
-    var body: some View {
-        HStack {
-            Text(text)
-                .foregroundStyle(.eBlack)
-                .font(.subheadline)
-            
-            Spacer()
-        }
     }
 }
 

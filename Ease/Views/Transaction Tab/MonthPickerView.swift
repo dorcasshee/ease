@@ -26,7 +26,7 @@ struct MonthPickerView: View {
                 // TODO: MONTH PICKER D:
             } label: {
                 Text(transactionVM.currentDate, format: .dateTime.month(.wide).year())
-                    .blackButtonStyle(font: .title3.weight(.bold))
+                    .roundButtonStyle(font: .title3.weight(.bold))
             }
             
             Spacer()
