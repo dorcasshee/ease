@@ -23,45 +23,36 @@ struct RecordExpenseView: View {
         case amount, payee, desc
     }
     
-    private var fieldOffset: CGFloat {
-        if focusedField == .payee { return -100 }
-        if focusedField == .desc { return -150 }
-        return 0
-    }
-    
     var body: some View {
-        ScrollViewReader { proxy in
-            ScrollView {
-                DismissButton()
-                
-                Text( transactionVM.trsnMode == .create ? "New Transaction" : "Edit Transaction")
-                    .font(.headline).fontWeight(.regular)
-                
-                TextField("$0.00", value: $transactionVM.amount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
-                    .focused($focusedField, equals: .amount)
-                    .font(.system(size: 50, weight: .bold))
-                    .keyboardType(.decimalPad)
-                    .multilineTextAlignment(.center)
-                    .padding()
-                    .id("amount")
-                    .minimumScaleFactor(0.6)
-                
-                Picker("Select transaction type", selection: $transactionVM.transactionType) {
-                    ForEach(TransactionType.allCases) { type in
-                        Text(type.rawValue.capitalized)
-                            .tag(type)
-                    }
+        ScrollView {
+            DismissButton()
+            
+            Text( transactionVM.trsnMode == .create ? "New Transaction" : "Edit Transaction")
+                .font(.headline).fontWeight(.regular)
+            
+            TextField("$0.00", value: $transactionVM.amount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
+                .focused($focusedField, equals: .amount)
+                .font(.system(size: 50, weight: .bold))
+                .keyboardType(.decimalPad)
+                .multilineTextAlignment(.center)
+                .minimumScaleFactor(0.6)
+                .padding()
+            
+            Picker("Select transaction type", selection: $transactionVM.transactionType) {
+                ForEach(TransactionType.allCases) { type in
+                    Text(type.rawValue.capitalized)
+                        .tag(type)
                 }
-                .pickerStyle(.segmented)
-                .padding(.horizontal)
-                .padding(.bottom)
-                .frame(width: 250) // change tint to match autocomplete suggestions
-                
-                RecordExpenseBodyView(categoryVM: categoryVM, transactionVM: transactionVM, focusedField: $focusedField)
             }
-            .scrollIndicators(.hidden)
-            .scrollBounceBehavior(.basedOnSize)
+            .pickerStyle(.segmented)
+            .padding(.horizontal)
+            .padding(.bottom)
+            .frame(width: 250) // change tint to match autocomplete suggestions
+            
+            RecordExpenseBodyView(categoryVM: categoryVM, transactionVM: transactionVM, focusedField: $focusedField)
         }
+        .scrollIndicators(.hidden)
+        .scrollBounceBehavior(.basedOnSize)
         .padding(.top)
         .padding(.horizontal)
         .dismissKeyboardOnTap()
@@ -93,9 +84,8 @@ struct RecordExpenseView: View {
                     autocompleteDropdown(for: field, at: geometry[anchor])
                 }
             }
-//            .animation(.easeInOut(duration: 0.3), value: focusedField)
-            .animation(.easeInOut(duration: 0.3), value: transactionVM.payeeSuggestions)
-            .animation(.easeInOut(duration: 0.3), value: transactionVM.descSuggestions)
+            .animation(.easeInOut(duration: 0.25), value: transactionVM.payeeSuggestions)
+            .animation(.easeInOut(duration: 0.25), value: transactionVM.descSuggestions)
         }
         .safeAreaInset(edge: .bottom) {
             if focusedField == .amount {
@@ -116,7 +106,7 @@ struct RecordExpenseView: View {
             }
         }
     }
-
+    
     @ViewBuilder
     private func autocompleteDropdown(for field: FocusField, at frame: CGRect) -> some View {
         let suggestions = (focusedField == .payee) ? transactionVM.payeeSuggestions :

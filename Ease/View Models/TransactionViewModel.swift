@@ -109,6 +109,8 @@ import SwiftData
                 let newTransaction = Transaction(amount: amount, category: category, desc: desc.isEmpty ? nil : desc, payee: payee, date: date, isRecurring: isRecurring)
                 context.insert(newTransaction)
             } else if trsnMode == .update, let editingTrsn = trsnToEdit {
+                let oldPayeeID = editingTrsn.payee?.persistentModelID
+                
                 editingTrsn.amount = amount
                 editingTrsn.category = category
                 editingTrsn.desc = desc.isEmpty ? nil : desc
@@ -117,6 +119,10 @@ import SwiftData
                 editingTrsn.isRecurring = isRecurring
                 
                 try context.save()
+                
+                if let oldPayeeID = oldPayeeID, oldPayeeID != payee?.persistentModelID {
+                    payeeViewModel.deletePayeeIfOrphaned(context: context, payeeID: oldPayeeID)
+                }
             }
 
             return true
@@ -132,7 +138,17 @@ import SwiftData
     }
     
     func deleteTransaction(context: ModelContext, item: Transaction) {
+        guard let payee = item.payee else {
+            context.delete(item)
+            return
+        }
+        
+        let payeeID = payee.persistentModelID
+        
         context.delete(item)
+        try? context.save()
+        
+        payeeViewModel.deletePayeeIfOrphaned(context: context, payeeID: payeeID)
     }
     
     func loadTransaction(trsn: Transaction, forEditing: Bool) {
