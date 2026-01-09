@@ -13,6 +13,7 @@ class Transaction {
     var amount: Double
     var desc: String?
     var date: Date
+    var createdAt: Date
     var isRecurring: Bool
     
     var formattedAmount: String {
@@ -31,6 +32,7 @@ class Transaction {
         self.desc = desc
         self.payee = payee
         self.date = date
+        self.createdAt = Date()
         self.isRecurring = isRecurring
     }
 }

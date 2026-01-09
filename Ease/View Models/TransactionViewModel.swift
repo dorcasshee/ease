@@ -50,7 +50,8 @@ import SwiftData
         let grouping = Dictionary(grouping: currentMonthTransactions, by: { Calendar.current.startOfDay(for: $0.date) })
         
         return grouping.map { (date, transactions) in
-            TransactionSection(date: date, transactions: transactions)
+            let sortedTrsns = transactions.sorted { $0.createdAt > $1.createdAt }
+            return TransactionSection(date: date, transactions: sortedTrsns)
         }
         .sorted { $0.date > $1.date }
     }
