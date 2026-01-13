@@ -14,13 +14,13 @@ struct DateRowView: View {
         HStack {
             Image(systemName: "calendar")
             
-            ZStack {
+            ZStack(alignment: .leading) {
                 DatePicker("", selection: $transactionVM.date, displayedComponents: .date)
                     .labelsHidden()
                     .blendMode(.destinationOver)
                 
-                Text(transactionVM.date, format: .dateTime.weekday(.wide).day().month(.wide))
-                    .font(.headline).fontWeight(.regular)
+                Text(transactionVM.date.formatRelativeDate())
+                    .font(.title3)
                     .allowsHitTesting(false)
             }
             

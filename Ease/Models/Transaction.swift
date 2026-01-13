@@ -49,18 +49,6 @@ struct TransactionSection: Identifiable {
     var formattedTotal: String {
         return totalAmount.formatAsCurrency()
     }
-    
-    var formattedDate: String {
-        if Calendar.current.isDateInToday(date) {
-            return "Today"
-        } else if Calendar.current.isDateInYesterday(date) {
-            return "Yesterday"
-        } else {
-            let formatter = DateFormatter()
-            formatter.setLocalizedDateFormatFromTemplate("EEEEdMMMM")
-            return formatter.string(from: date)
-        }
-    }
 }
 
 extension Double {
@@ -70,5 +58,21 @@ extension Double {
         formatter.currencyCode = Locale.current.currency?.identifier ?? "USD"
     
         return formatter.string(from: NSNumber(value: self)) ?? "$0.00"
+    }
+}
+
+extension Date {
+    func formatRelativeDate() -> String {
+        if Calendar.current.isDateInToday(self) {
+            return "Today"
+        } else if Calendar.current.isDateInYesterday(self) {
+            return "Yesterday"
+        }  else if Calendar.current.isDateInTomorrow(self){
+            return "Tomorrow"
+        } else {
+            let formatter = DateFormatter()
+            formatter.setLocalizedDateFormatFromTemplate("EEEEdMMMM")
+            return formatter.string(from: self)
+        }
     }
 }

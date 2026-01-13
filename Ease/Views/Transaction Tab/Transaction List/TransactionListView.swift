@@ -48,7 +48,7 @@ struct TransactionListView: View {
                         }
                     }
                 } header: {
-                    TransactionHeaderView(date: section.formattedDate, amount: section.formattedTotal)
+                    TransactionHeaderView(date: section.date.formatRelativeDate(), amount: section.formattedTotal)
                         .listRowInsets(EdgeInsets())
                 }
                 .listSectionSpacing(30)
