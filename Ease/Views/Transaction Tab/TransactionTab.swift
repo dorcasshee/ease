@@ -11,6 +11,7 @@ import SwiftData
 struct TransactionTab: View {
     @Query(sort: \Transaction.date, order: .reverse) private var transactions: [Transaction]
     @Bindable var transactionVM: TransactionViewModel
+    @State private var buttonTapCount: Int = 0
     
     var body: some View {
         VStack {
@@ -25,12 +26,13 @@ struct TransactionTab: View {
             BalanceCardView(transactionVM: transactionVM)
                 .padding(.horizontal, 10)
             
-            SearchFilterRowView()
+//            SearchFilterRowView()
             
             TransactionListView(transactionVM: transactionVM, transactions: transactions)
                 .padding(.horizontal, -10)
                 .overlay(alignment: .bottomTrailing) {
                     Button {
+                        buttonTapCount += 1
                         transactionVM.showSheet = true
                         transactionVM.trsnMode = .create
                     } label: {
@@ -47,6 +49,7 @@ struct TransactionTab: View {
                     .sheet(isPresented: $transactionVM.showSheet) {
                         RecordExpenseView(transactionVM: transactionVM)
                     }
+                    .sensoryFeedback(.selection, trigger: buttonTapCount)
                 }
         }
         .padding()

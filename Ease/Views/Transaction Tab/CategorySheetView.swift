@@ -15,8 +15,6 @@ struct CategorySheetView: View {
     @State private var categoryVM = CategoryViewModel()
     var transactionVM: TransactionViewModel
     
-    let columns: [GridItem] = Array(repeating: GridItem(.flexible()), count: 4)
-    
     var body: some View {
         VStack {
             DismissButton()
@@ -30,25 +28,15 @@ struct CategorySheetView: View {
             // TODO: search bar
             
             ScrollView {
-                ForEach(categoryVM.getParentCategories(categories: categories, transactionType: transactionVM.transactionType)) { parent in
-                    Section {
-                        LazyVGrid(columns: columns) {
-                            ForEach(categoryVM.sortedSubCategories(cat: parent.subCategories)) { cat in
-                                Button {
-                                    transactionVM.selectedCategories[transactionVM.transactionType] = cat
-                                    dismiss()
-                                } label: {
-                                    CategoryButtonView(categoryName: cat.name, imageName: cat.iconName, color: cat.transactionType.color)
-                                        .padding(.bottom, 5)
-                                }
-                            }
+                LazyVStack(pinnedViews: [.sectionHeaders]){
+                    ForEach(categoryVM.getParentCategories(categories: categories, transactionType: transactionVM.transactionType)) { parent in
+                        Section {
+                            SubCategoryGridView(categoryVM: categoryVM, transactionVM: transactionVM, parent: parent)
+                        } header: {
+                            CategoryHeaderView(name: parent.name, iconName: parent.iconName, count: parent.subCategories.count)
                         }
-                        .padding(.bottom)
-                    } header: {
-                        // TODO: STICKY HEADERS (maybe swap to List + LazyVGrid then searchable for search bar in category sheet)
-                        CategoryHeaderView(name: parent.name, iconName: parent.iconName, count: parent.subCategories.count)
+                        .padding(.bottom, 10)
                     }
-                    .padding(.bottom, 10)
                 }
             }
             .scrollIndicators(.hidden)
@@ -62,6 +50,35 @@ struct CategorySheetView: View {
     CategorySheetView(transactionVM: TransactionViewModel())
         .modelContainer(.preview)
 }
+
+struct SubCategoryGridView: View {
+    @Environment(\.dismiss) private var dismiss
+    @State private var buttonTapCount: Int = 0
+    
+    var categoryVM: CategoryViewModel
+    var transactionVM: TransactionViewModel
+    var parent: TransactionCategory
+    
+    let columns: [GridItem] = Array(repeating: GridItem(.flexible()), count: 4)
+    
+    var body: some View {
+        LazyVGrid(columns: columns) {
+            ForEach(categoryVM.sortedSubCategories(cat: parent.subCategories)) { cat in
+                Button {
+                    buttonTapCount += 1
+                    transactionVM.selectedCategories[transactionVM.transactionType] = cat
+                    dismiss()
+                } label: {
+                    CategoryButtonView(categoryName: cat.name, imageName: cat.iconName, color: cat.transactionType.color)
+                        .padding(.bottom, 5)
+                }
+                .sensoryFeedback(.selection, trigger: buttonTapCount)
+            }
+        }
+        .padding(.bottom)
+    }
+}
+
 
 struct CategoryHeaderView: View {
     let name: String
@@ -82,7 +99,9 @@ struct CategoryHeaderView: View {
             }
             
             CustomDivider()
+                .padding(.bottom, 10)
         }
+        .background(.eWhite)
     }
 }
 
@@ -97,6 +116,7 @@ struct CounterView: View {
             Text(count)
                 .font(.body)
         }
+        .foregroundStyle(.eBlack)
     }
 }
 

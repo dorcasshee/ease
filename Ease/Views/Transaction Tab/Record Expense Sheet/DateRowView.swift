@@ -9,6 +9,7 @@ import SwiftUI
 
 struct DateRowView: View {
     @Bindable var transactionVM: TransactionViewModel
+    @State private var buttonTapCount: Int = 0
     
     var body: some View {
         HStack {
@@ -27,21 +28,23 @@ struct DateRowView: View {
             Spacer()
             
             Button {
+                buttonTapCount += 1
                 transactionVM.decrementDate()
             } label: {
                 Image(systemName: "chevron.left")
                     .foregroundStyle(.eBlack)
             }
             .padding(.trailing)
-            .sensoryFeedback(.selection, trigger: transactionVM.date)
             
             Button {
+                buttonTapCount += 1
                 transactionVM.incrementDate()
             } label: {
                 Image(systemName: "chevron.right")
                     .foregroundStyle(.eBlack)
             }
         }
+        .sensoryFeedback(.selection, trigger: buttonTapCount)
     }
 }
 

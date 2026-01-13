@@ -17,6 +17,7 @@ struct RecordExpenseView: View {
     @State private var categoryVM = CategoryViewModel()
     @Bindable var transactionVM: TransactionViewModel
     
+    @State private var buttonTapCount: Int = 0
     @FocusState private var focusedField: FocusField?
     
     enum FocusField: Hashable {
@@ -93,6 +94,7 @@ struct RecordExpenseView: View {
                     Spacer()
                     
                     Button {
+                        buttonTapCount += 1
                         focusedField = nil
                     } label: {
                         Image(systemName: "checkmark.circle.fill")
@@ -103,6 +105,7 @@ struct RecordExpenseView: View {
                             .padding()
                     }
                 }
+                .sensoryFeedback(.selection, trigger: buttonTapCount)
             }
         }
     }

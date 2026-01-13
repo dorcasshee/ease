@@ -8,17 +8,18 @@
 import SwiftUI
 
 struct MonthPickerView: View {
+    @State private var buttonTapCount: Int = 0
     var transactionVM: TransactionViewModel
     
     var body: some View {
         HStack {
             Button {
+                buttonTapCount += 1
                 transactionVM.decrementMonth()
             } label: {
                 Image(systemName: "chevron.left")
                     .foregroundStyle(.eBlack)
             }
-            .sensoryFeedback(.selection, trigger: transactionVM.currentDate)
             
             Spacer()
             
@@ -32,6 +33,7 @@ struct MonthPickerView: View {
             Spacer()
             
             Button {
+                buttonTapCount += 1
                 transactionVM.incrementMonth()
             } label: {
                 Image(systemName: "chevron.right")
@@ -39,6 +41,7 @@ struct MonthPickerView: View {
             }
         }
         .padding(.horizontal)
+        .sensoryFeedback(.selection, trigger: buttonTapCount)
     }
 }
 

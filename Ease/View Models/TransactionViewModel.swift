@@ -10,7 +10,7 @@ import SwiftData
 
 @Observable class TransactionViewModel {
     /*
-     This view model contains the following logic for transaction CRUD operations.
+     This view model manages transaction CRUD operations.
      */
     
     private var payeeViewModel: PayeeViewModel
@@ -139,6 +139,8 @@ import SwiftData
     }
     
     func deleteTransaction(context: ModelContext, item: Transaction) {
+        currentMonthTransactions.removeAll { $0.id == item.id }
+        
         guard let payee = item.payee else {
             context.delete(item)
             return
@@ -174,6 +176,10 @@ import SwiftData
     }
     
     func resetForm() {
+        isEdit = false
+        trsnToEdit = nil
+        trsnMode = .create
+        
         amount = nil
         transactionType = .expense
         selectedCategories.removeAll()
@@ -181,12 +187,23 @@ import SwiftData
         payeeName = ""
         date = Date()
         isRecurring = false
-
-        isEdit = false
-        trsnToEdit = nil
-        trsnMode = .create
+        
         payeeSuggestions = []
         descSuggestions = []
+    }
+    
+    func saveAndResetForAnother(context: ModelContext, categoryVM: CategoryViewModel) -> Bool {
+        let success = saveTransaction(context: context)
+        
+        if success {
+            let lastSavedDate = date
+            resetForm()
+            date = lastSavedDate
+            selectedCategories[transactionType] = try? categoryVM.getDefaultCategory(for: transactionType, context: context)
+            return true
+        } else {
+            return false
+        }
     }
     
     func getTransactionsByMonth(transactions: [Transaction]) {

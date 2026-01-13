@@ -29,11 +29,15 @@ class PayeeViewModel {
     }
     
     func deletePayeeIfOrphaned(context: ModelContext, payeeID: PersistentIdentifier) {
-        if let payee = context.model(for: payeeID) as? Payee {
-            if payee.transactions.isEmpty {
-                context.delete(payee)
-                try? context.save()
-            }
+        guard let payee = context.model(for: payeeID) as? Payee else { return }
+        
+        let payeeName = payee.name
+        let descriptor = FetchDescriptor<Transaction>(predicate: #Predicate { $0.payee?.name == payeeName })
+        let count = try? context.fetchCount(descriptor)
+        
+        if count == 0 {
+            context.delete(payee)
+            try? context.save()
         }
     }
 }

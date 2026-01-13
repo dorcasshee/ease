@@ -11,6 +11,7 @@ import SwiftData
 struct TransactionListView: View {
     @Environment(\.modelContext) private var context
     @Bindable var transactionVM: TransactionViewModel
+    @State private var buttonTapCount: Int = 0
     var transactions: [Transaction]
     
     var body: some View {
@@ -22,6 +23,7 @@ struct TransactionListView: View {
                 Section {
                     ForEach(section.transactions) { transaction in
                         Button {
+                            buttonTapCount += 1
                             transactionVM.loadTransaction(trsn: transaction, forEditing: true)
                             transactionVM.showSheet = true
                         } label: {
@@ -66,6 +68,7 @@ struct TransactionListView: View {
             .sheet(isPresented: $transactionVM.showSheet) {
                 RecordExpenseView(transactionVM: transactionVM)
             }
+            .sensoryFeedback(.selection, trigger: buttonTapCount)
         }
     }
 }

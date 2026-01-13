@@ -17,6 +17,7 @@ struct RecordExpenseBodyView: View {
     @Query private var transactions: [Transaction]
     @Query private var payees: [Payee]
     
+    @State private var buttonTapCount: Int = 0
     @FocusState.Binding var focusedField: RecordExpenseView.FocusField?
     
     var body: some View {
@@ -24,6 +25,7 @@ struct RecordExpenseBodyView: View {
             CustomDivider()
             
             Button {
+                buttonTapCount += 1
                 categoryVM.showSheet = true
             } label: {
                 HStack {
@@ -40,6 +42,7 @@ struct RecordExpenseBodyView: View {
             .sheet(isPresented: $categoryVM.showSheet) {
                 CategorySheetView(transactionVM: transactionVM)
             }
+            .sensoryFeedback(.selection, trigger: buttonTapCount)
             
             CustomDivider()
             
@@ -97,53 +100,5 @@ struct CustomDivider: View {
     var body: some View {
         Divider()
             .opacity(0.8)
-    }
-}
-
-struct SaveButtonsView: View {
-    @Environment(\.modelContext) private var context
-    @Environment(\.dismiss) private var dismiss
-    
-    @Bindable var transactionVM: TransactionViewModel
-    @Bindable var categoryVM: CategoryViewModel
-    
-    @FocusState.Binding var focusedField: RecordExpenseView.FocusField?
-    
-    var body: some View {
-        VStack(spacing: 10) {
-            Button {
-                if transactionVM.saveTransaction(context: context) {
-                    dismiss()
-                }
-            } label: {
-                Text("Save")
-                    .frame(maxWidth: .infinity)
-                    .roundButtonStyle(color: .eBlack)
-            }
-            
-            Button {
-                if transactionVM.saveTransaction(context: context) {
-                    transactionVM.resetForm()
-                    transactionVM.selectedCategories[transactionVM.transactionType] = try? categoryVM.getDefaultCategory(for: transactionVM.transactionType, context: context)
-                    focusedField = .amount
-                }
-            } label: {
-                Text("Save & Add Another")
-                    .frame(maxWidth: .infinity)
-                    .roundButtonStyle(color: .eBlack)
-            }
-            
-            if transactionVM.trsnMode == .update, let trsnToEdit = transactionVM.trsnToEdit {
-                Button {
-                    dismiss()
-                    transactionVM.deleteTransaction(context: context, item: trsnToEdit)
-                } label: {
-                    Text("Delete")
-                        .frame(maxWidth: .infinity)
-                        .roundButtonStyle(color: .eRed)
-                }
-            }
-        }
-        .fixedSize(horizontal: true, vertical: false)
     }
 }
