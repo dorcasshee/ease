@@ -17,7 +17,7 @@ struct TransactionTab: View {
             MonthPickerView(transactionVM: transactionVM)
             
             Text("^[\(transactionVM.currentMonthTransactions.count) transaction](inflect:true)")
-                .font(.caption)
+                .font(.callout)
                 .foregroundStyle(.secondary)
                 .padding(.top, 5)
                 .padding(.bottom)

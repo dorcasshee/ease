@@ -47,7 +47,7 @@ struct RecordExpenseView: View {
             .pickerStyle(.segmented)
             .padding(.horizontal)
             .padding(.bottom)
-            .frame(width: 250) // change tint to match autocomplete suggestions
+            .frame(width: 250)
             
             RecordExpenseBodyView(categoryVM: categoryVM, transactionVM: transactionVM, focusedField: $focusedField)
         }
@@ -158,6 +158,21 @@ struct BoundsPreferenceKey: PreferenceKey {
     
     static func reduce(value: inout Value, nextValue: () -> Value) {
         value.merge(nextValue()) { $1 }
+    }
+}
+
+struct AutocompleteRowView: View {
+    var text: String
+    
+    var body: some View {
+        HStack {
+            Text(text)
+                .foregroundStyle(.eBlack)
+                .font(.subheadline)
+                .multilineTextAlignment(.leading)
+            
+            Spacer()
+        }
     }
 }
 

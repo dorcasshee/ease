@@ -20,7 +20,7 @@ struct TransactionHeaderView: View {
                 
                 Text(amount)
             }
-            .font(.headline.weight(.heavy))
+            .font(.title3.weight(.heavy))
             .multilineTextAlignment(.leading)
             .foregroundStyle(.eBlack)
             

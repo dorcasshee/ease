@@ -17,18 +17,18 @@ struct TransactionRowView: View {
             
             VStack(alignment: .leading) {
                 Text(transaction.desc ?? transaction.category.name)
-                    .font(.headline.weight(.medium))
+                    .font(.title3.weight(.medium))
                     .foregroundStyle(.eBlack)
                 
                 if transaction.desc != nil {
                     Text(transaction.category.name)
-                        .font(.caption)
+                        .font(.callout)
                         .foregroundStyle(.eBlack.secondary)
                 }
                 
                 if transaction.payee != nil {
                     Text(transaction.payee?.name ?? "")
-                        .font(.caption.bold())
+                        .font(.callout.bold())
                         .foregroundStyle(.eBlack.secondary)
                 }
             }
@@ -37,7 +37,7 @@ struct TransactionRowView: View {
             Spacer()
             
             Text(transaction.formattedAmount)
-                .font(.headline)
+                .font(.title3)
                 .fontWeight(transaction.category.transactionType == .income ? .bold : .light)
                 .foregroundStyle(transaction.category.transactionType == .income ? .eGreen : .eBlack)
         }

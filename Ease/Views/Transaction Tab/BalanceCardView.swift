@@ -9,20 +9,29 @@ import SwiftUI
 
 struct BalanceCardView: View {
     var transactionVM: TransactionViewModel
+    var font: Font {
+        if transactionVM.maxFigCount >= 11 {
+            return .subheadline
+        } else if transactionVM.maxFigCount >= 9 {
+            return .headline
+        } else {
+            return .title3
+        }
+    }
 
     var body: some View {
         HStack {
-            BalanceItemView(amount: transactionVM.currentMonthIncome, label: "Income", useSmallFont: transactionVM.isSmallerSummary)
+            BalanceItemView(amount: transactionVM.currentMonthIncome, label: "Income", font: font)
 
             Spacer()
 
-            BalanceItemView(amount: transactionVM.currentMonthExpense, label: "Expense", useSmallFont: transactionVM.isSmallerSummary)
+            BalanceItemView(amount: transactionVM.currentMonthExpense, label: "Expense", font: font)
 
             Spacer()
 
-            BalanceItemView(amount: transactionVM.currentMonthBalance, label: "Balance", useSmallFont: transactionVM.isSmallerSummary)
+            BalanceItemView(amount: transactionVM.currentMonthBalance, label: "Balance", font: font)
         }
-        .padding(.horizontal, 25)
+        .padding(.horizontal, 25) 
         .padding(.vertical)
         .background {
             RoundedRectangle(cornerRadius: 12)
@@ -35,17 +44,17 @@ struct BalanceCardView: View {
 struct BalanceItemView: View {
     let amount: Double
     let label: String
-    let useSmallFont: Bool
+    var font: Font
 
     var body: some View {
         VStack {
             Text(amount.formatAsCurrency())
-                .font(useSmallFont ? .subheadline : .title3)
+                .font(font)
                 .fontWeight(.bold)
 
             Text(label)
-                .font(.caption.weight(.light))
-                .foregroundStyle(.secondary)
+                .font(.callout.weight(.light))
+                .foregroundStyle(Color(.systemGray))
         }
     }
 }

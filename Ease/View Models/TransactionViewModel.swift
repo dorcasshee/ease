@@ -76,12 +76,12 @@ import SwiftData
         return currentMonthIncome - currentMonthExpense
     }
     
-    var isSmallerSummary: Bool {
-        if currentMonthIncome.formatAsCurrency().count >= 8 || currentMonthExpense.formatAsCurrency().count >= 8 || currentMonthBalance.formatAsCurrency().count >= 8 {
-            return true
-        } else {
-            return false
-        }
+    var maxFigCount: Int {
+        return max(
+            currentMonthIncome.formatAsCurrency().count,
+            currentMonthExpense.formatAsCurrency().count,
+            currentMonthBalance.formatAsCurrency().count
+        )
     }
     
     enum TransactionMode: Equatable {

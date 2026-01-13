@@ -100,20 +100,6 @@ struct CustomDivider: View {
     }
 }
 
-struct AutocompleteRowView: View {
-    var text: String
-    
-    var body: some View {
-        HStack {
-            Text(text)
-                .foregroundStyle(.eBlack)
-                .font(.subheadline)
-            
-            Spacer()
-        }
-    }
-}
-
 struct SaveButtonsView: View {
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
