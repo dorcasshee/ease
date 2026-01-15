@@ -162,7 +162,7 @@ import SwiftData
         selectedCategories = [transactionType: trsn.category]
         desc = trsn.desc ?? ""
         payeeName = trsn.payee?.name ?? ""
-        date = trsn.date
+        date = Date()
         isRecurring = trsn.isRecurring
         
         if forEditing {

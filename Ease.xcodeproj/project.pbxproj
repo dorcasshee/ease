@@ -30,6 +30,11 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		9B37D4302F1986AC00A79376 /* imgs */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = imgs;
+			sourceTree = "<group>";
+		};
 		9BD1E3462EB5E4AB0087C0F2 /* Ease */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Ease;
@@ -79,6 +84,7 @@
 				9BD1E3542EB5E4AE0087C0F2 /* EaseTests */,
 				9BD1E35E2EB5E4AE0087C0F2 /* EaseUITests */,
 				9BD1E3452EB5E4AB0087C0F2 /* Products */,
+				9B37D4302F1986AC00A79376 /* imgs */,
 			);
 			sourceTree = "<group>";
 		};
@@ -108,6 +114,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				9B37D4302F1986AC00A79376 /* imgs */,
 				9BD1E3462EB5E4AB0087C0F2 /* Ease */,
 			);
 			name = Ease;
