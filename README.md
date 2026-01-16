@@ -1,6 +1,5 @@
 # Ease
-`[TODO?: should I INSERT BANNER HERE WITH EASE LOGO + mockups?]`  
-**A minimal iOS expense tracking app built with SwiftUI and SwiftData**
+![](media/Banner.jpg)
 
 ![iOS 17+](https://img.shields.io/badge/iOS-18%2B-blue)
 ![Swift](https://img.shields.io/badge/Swift-5.9-orange)
