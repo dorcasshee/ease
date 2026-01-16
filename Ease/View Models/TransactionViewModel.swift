@@ -18,7 +18,7 @@ import SwiftData
     var isSelected: Bool = false
     var date: Date
     var transactionType: TransactionType = .expense
-    var selectedCategories: [TransactionType: TransactionCategory] = [:]
+    var selectedCategories: [TransactionType: Category] = [:]
     var desc: String = ""
     var payeeName: String = ""
     var isRecurring: Bool = false
@@ -42,7 +42,7 @@ import SwiftData
     var isSuggestionSelected: Bool = false
     
     // computed properties
-    var category: TransactionCategory? {
+    var category: Category? {
         selectedCategories[transactionType]
     }
     
@@ -162,16 +162,17 @@ import SwiftData
         selectedCategories = [transactionType: trsn.category]
         desc = trsn.desc ?? ""
         payeeName = trsn.payee?.name ?? ""
-        date = Date()
         isRecurring = trsn.isRecurring
         
         if forEditing {
             trsnMode = .update
             isEdit = true
             trsnToEdit = trsn
+            date = trsn.date
         } else {
             isEdit = false
             trsnToEdit = nil
+            date = Date()
         }
     }
     

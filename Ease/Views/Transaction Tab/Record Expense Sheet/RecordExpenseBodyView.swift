@@ -18,7 +18,7 @@ struct RecordExpenseBodyView: View {
     @Query private var payees: [Payee]
     
     @State private var buttonTapCount: Int = 0
-    @FocusState.Binding var focusedField: RecordExpenseView.FocusField?
+    var focusedField: FocusState<RecordExpenseView.FocusField?>.Binding
     
     var body: some View {
         VStack(spacing: 20) {
@@ -33,7 +33,7 @@ struct RecordExpenseBodyView: View {
                         .foregroundStyle(.eBlack)
                     
                     Label(transactionVM.category?.name ?? "", systemImage: transactionVM.category?.iconName ?? "circle")
-                        .foregroundStyle(transactionVM.transactionType.color)
+                        .foregroundStyle(transactionVM.category?.iconName != nil ? transactionVM.transactionType.color : .eWhite)
                     
                     Spacer()
                 }
@@ -52,7 +52,7 @@ struct RecordExpenseBodyView: View {
                     .foregroundStyle(.eBlack)
                 
                 TextField("Entity", text: $transactionVM.payeeName)
-                    .focused($focusedField, equals: .payee)
+                    .focused(focusedField, equals: .payee)
                     .autocorrectionDisabled(false)
                     .submitLabel(.done)
                     .font(.headline).fontWeight(.regular)
@@ -68,7 +68,7 @@ struct RecordExpenseBodyView: View {
                 Image(systemName: "line.3.horizontal")
                 
                 TextField("Description", text: $transactionVM.desc)
-                    .focused($focusedField, equals: .desc)
+                    .focused(focusedField, equals: .desc)
                     .autocorrectionDisabled(false)
                     .submitLabel(.done)
                     .font(.headline).fontWeight(.regular)
@@ -88,7 +88,7 @@ struct RecordExpenseBodyView: View {
             CustomDivider()
                 .padding(.bottom, 15)
             
-            SaveButtonsView(transactionVM: transactionVM, categoryVM: categoryVM, focusedField: $focusedField)
+            SaveButtonsView(transactionVM: transactionVM, categoryVM: categoryVM, focusedField: focusedField)
         }
         .padding(.top, 10)
         .padding(.bottom, 25)
@@ -99,6 +99,6 @@ struct RecordExpenseBodyView: View {
 struct CustomDivider: View {
     var body: some View {
         Divider()
-            .opacity(0.8)
+            .overlay(Color.eDividerGray)
     }
 }

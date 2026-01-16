@@ -15,7 +15,7 @@ struct SaveButtonsView: View {
     @Bindable var categoryVM: CategoryViewModel
     
     @State private var buttonTapCount: Int = 0
-    @FocusState.Binding var focusedField: RecordExpenseView.FocusField?
+    var focusedField: FocusState<RecordExpenseView.FocusField?>.Binding
     
     var body: some View {
         VStack(spacing: 10) {
@@ -33,7 +33,7 @@ struct SaveButtonsView: View {
             Button {
                 buttonTapCount += 1
                 if transactionVM.saveAndResetForAnother(context: context, categoryVM: categoryVM) {
-                    focusedField = .amount
+                    focusedField.wrappedValue = .amount
                 }
             } label: {
                 Text("Save & Add Another")

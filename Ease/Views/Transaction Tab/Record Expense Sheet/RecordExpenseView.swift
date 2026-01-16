@@ -12,7 +12,7 @@ struct RecordExpenseView: View {
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
     
-    @Query private var categories: [TransactionCategory]
+    @Query private var categories: [Category]
     
     @State private var categoryVM = CategoryViewModel()
     @Bindable var transactionVM: TransactionViewModel
@@ -231,7 +231,15 @@ extension View {
     }
 }
 
+private struct RecordExpensePreviewWrapper: View {
+    @State private var transactionVM = TransactionViewModel()
+
+    var body: some View {
+        RecordExpenseView(transactionVM: transactionVM)
+    }
+}
+
 #Preview {
-    RecordExpenseView(transactionVM: TransactionViewModel())
+    RecordExpensePreviewWrapper()
         .modelContainer(.preview)
 }

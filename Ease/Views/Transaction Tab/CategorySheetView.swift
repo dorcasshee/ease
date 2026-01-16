@@ -10,7 +10,7 @@ import SwiftData
 
 struct CategorySheetView: View {
     @Environment(\.dismiss) private var dismiss
-    @Query private var categories: [TransactionCategory]
+    @Query private var categories: [Category]
     
     @State private var categoryVM = CategoryViewModel()
     var transactionVM: TransactionViewModel
@@ -22,7 +22,16 @@ struct CategorySheetView: View {
             HStack {
                 Text("Categories")
                     .font(.title.bold())
+                
                 Spacer()
+                
+                Button {
+                    
+                } label: {
+                    Image(systemName: "pencil")
+                        .font(.title)
+                        .foregroundStyle(.eBlack)
+                }
             }
             
             // TODO: search bar
@@ -57,7 +66,7 @@ struct SubCategoryGridView: View {
     
     var categoryVM: CategoryViewModel
     var transactionVM: TransactionViewModel
-    var parent: TransactionCategory
+    var parent: Category
     
     let columns: [GridItem] = Array(repeating: GridItem(.flexible()), count: 4)
     

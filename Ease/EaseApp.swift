@@ -14,11 +14,11 @@ struct EaseApp: App {
         WindowGroup {
             ContentView()
         }
-        .modelContainer(for: [Transaction.self, Payee.self, TransactionCategory.self], onSetup: { result in
+        .modelContainer(for: [Transaction.self, Payee.self, Category.self], onSetup: { result in
             switch result {
                 case .success(let container):
                     do {
-                        try TransactionCategory.seedDefaultCategories(in: container.mainContext)
+                        try Category.seedDefaultCategories(in: container.mainContext)
                     } catch {
                         print("Error occurred while seeding data: \(error.localizedDescription)")
                     }
@@ -31,7 +31,7 @@ struct EaseApp: App {
 
 extension ModelContainer {
     static var preview: ModelContainer {
-        let schema = Schema([Transaction.self, TransactionCategory.self, Payee.self])
+        let schema = Schema([Transaction.self, Category.self, Payee.self])
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
         let container = try! ModelContainer(for: schema, configurations: config)
         
@@ -39,61 +39,61 @@ extension ModelContainer {
         let context = container.mainContext
         
         // entertainment
-        let entertainment = TransactionCategory(name: "Entertainment", iconName: "tv", transactionType: .expense)
+        let entertainment = Category(name: "Entertainment", iconName: "tv", transactionType: .expense)
         context.insert(entertainment)
-        context.insert(TransactionCategory(name: "Crafts", iconName: "pencil.and.outline", transactionType: .expense, parentCategory: entertainment))
-        let gaming = TransactionCategory(name: "Gaming", iconName: "gamecontroller.circle", transactionType: .expense, parentCategory: entertainment)
+        context.insert(Category(name: "Crafts", iconName: "pencil.and.outline", transactionType: .expense, parentCategory: entertainment))
+        let gaming = Category(name: "Gaming", iconName: "gamecontroller.circle", transactionType: .expense, parentCategory: entertainment)
         context.insert(gaming)
         
         // food
-        let food = TransactionCategory(name: "Food", iconName: "fork.knife", transactionType: .expense)
+        let food = Category(name: "Food", iconName: "fork.knife", transactionType: .expense)
         context.insert(food)
-        let groceries = TransactionCategory(name: "Groceries", iconName: "carrot", transactionType: .expense, parentCategory: food)
+        let groceries = Category(name: "Groceries", iconName: "carrot", transactionType: .expense, parentCategory: food)
         context.insert(groceries)
-        context.insert(TransactionCategory(name: "Drinks", iconName: "cup.and.saucer", transactionType: .expense, parentCategory: food))
-        context.insert(TransactionCategory(name: "Food", iconName: "fork.knife", isDefault: true, transactionType: .expense, parentCategory: food))
-        let takeout = TransactionCategory(name: "Takeout", iconName: "takeoutbag.and.cup.and.straw", transactionType: .expense, parentCategory: food)
+        context.insert(Category(name: "Drinks", iconName: "cup.and.saucer", transactionType: .expense, parentCategory: food))
+        context.insert(Category(name: "Food", iconName: "fork.knife", isDefault: true, transactionType: .expense, parentCategory: food))
+        let takeout = Category(name: "Takeout", iconName: "takeoutbag.and.cup.and.straw", transactionType: .expense, parentCategory: food)
         context.insert(takeout)
-        context.insert(TransactionCategory(name: "Snacks", iconName: "spoon.serving", transactionType: .expense, parentCategory: food))
-        context.insert(TransactionCategory(name: "Food Delivery", iconName: "motorcycle", transactionType: .expense, parentCategory: food))
+        context.insert(Category(name: "Snacks", iconName: "spoon.serving", transactionType: .expense, parentCategory: food))
+        context.insert(Category(name: "Food Delivery", iconName: "motorcycle", transactionType: .expense, parentCategory: food))
         
         // health and fitness
-        let healthAndFitness = TransactionCategory(name: "Health and Fitness", iconName: "heart", transactionType: .expense)
+        let healthAndFitness = Category(name: "Health and Fitness", iconName: "heart", transactionType: .expense)
         context.insert(healthAndFitness)
-        context.insert(TransactionCategory(name: "Insurance", iconName: "dollarsign.circle", transactionType: .expense, parentCategory: healthAndFitness))
-        context.insert(TransactionCategory(name: "Medical Bills", iconName: "stethoscope.circle", transactionType: .expense, parentCategory: healthAndFitness))
-        context.insert(TransactionCategory(name: "Medication", iconName: "pill.circle", transactionType: .expense, parentCategory: healthAndFitness))
-        context.insert(TransactionCategory(name: "Wellness", iconName: "figure.run.circle", transactionType: .expense, parentCategory: healthAndFitness))
+        context.insert(Category(name: "Insurance", iconName: "dollarsign.circle", transactionType: .expense, parentCategory: healthAndFitness))
+        context.insert(Category(name: "Medical Bills", iconName: "stethoscope.circle", transactionType: .expense, parentCategory: healthAndFitness))
+        context.insert(Category(name: "Medication", iconName: "pill.circle", transactionType: .expense, parentCategory: healthAndFitness))
+        context.insert(Category(name: "Wellness", iconName: "figure.run.circle", transactionType: .expense, parentCategory: healthAndFitness))
         
         // housing
-        let housing = TransactionCategory(name: "Housing", iconName: "house", transactionType: .expense)
+        let housing = Category(name: "Housing", iconName: "house", transactionType: .expense)
         context.insert(housing)
-        context.insert(TransactionCategory(name: "Rent", iconName: "dollarsign.circle", transactionType: .expense, parentCategory: housing))
-        context.insert(TransactionCategory(name: "Mortgage", iconName: "dollarsign.bank.building", transactionType: .expense, parentCategory: housing))
-        context.insert(TransactionCategory(name: "Utilities", iconName: "bolt.circle", transactionType: .expense, parentCategory: housing))
+        context.insert(Category(name: "Rent", iconName: "dollarsign.circle", transactionType: .expense, parentCategory: housing))
+        context.insert(Category(name: "Mortgage", iconName: "dollarsign.bank.building", transactionType: .expense, parentCategory: housing))
+        context.insert(Category(name: "Utilities", iconName: "bolt.circle", transactionType: .expense, parentCategory: housing))
         
         // income
-        let income = TransactionCategory(name: "Income", iconName: "dollarsign", transactionType: .income)
+        let income = Category(name: "Income", iconName: "dollarsign", transactionType: .income)
         context.insert(income)
-        let salary = TransactionCategory(name: "Salary", iconName: "dollarsign.circle", isDefault: true, transactionType: .income, parentCategory: income)
+        let salary = Category(name: "Salary", iconName: "dollarsign.circle", isDefault: true, transactionType: .income, parentCategory: income)
         context.insert(salary)
-        context.insert(TransactionCategory(name: "Freelance", iconName: "dollarsign.circle", transactionType: .income, parentCategory: income))
-        context.insert(TransactionCategory(name: "Dividends", iconName: "dollarsign.circle", transactionType: .income, parentCategory: income))
+        context.insert(Category(name: "Freelance", iconName: "dollarsign.circle", transactionType: .income, parentCategory: income))
+        context.insert(Category(name: "Dividends", iconName: "dollarsign.circle", transactionType: .income, parentCategory: income))
         
         // personal care
-        let personal = TransactionCategory(name: "Personal Care", iconName: "person", transactionType: .expense)
+        let personal = Category(name: "Personal Care", iconName: "person", transactionType: .expense)
         context.insert(personal)
-        let hairCare = TransactionCategory(name: "Hair Care", iconName: "bubbles.and.sparkles", transactionType: .expense, parentCategory: personal)
+        let hairCare = Category(name: "Hair Care", iconName: "bubbles.and.sparkles", transactionType: .expense, parentCategory: personal)
         context.insert(hairCare)
-        context.insert(TransactionCategory(name: "Body Care", iconName: "bubbles.and.sparkles", transactionType: .expense, parentCategory: personal))
-        context.insert(TransactionCategory(name: "Skin Care", iconName: "bubbles.and.sparkles", transactionType: .expense, parentCategory: personal))
-        context.insert(TransactionCategory(name: "Cosmetics", iconName: "paintbrush.pointed", transactionType: .expense, parentCategory: personal))
+        context.insert(Category(name: "Body Care", iconName: "bubbles.and.sparkles", transactionType: .expense, parentCategory: personal))
+        context.insert(Category(name: "Skin Care", iconName: "bubbles.and.sparkles", transactionType: .expense, parentCategory: personal))
+        context.insert(Category(name: "Cosmetics", iconName: "paintbrush.pointed", transactionType: .expense, parentCategory: personal))
         
         // transport
-        let transport = TransactionCategory(name: "Transport", iconName: "car", transactionType: .expense)
+        let transport = Category(name: "Transport", iconName: "car", transactionType: .expense)
         context.insert(transport)
-        context.insert(TransactionCategory(name: "Public Transport", iconName: "bus", transactionType: .expense, parentCategory: transport))
-        context.insert(TransactionCategory(name: "Private Hire", iconName: "car", transactionType: .expense, parentCategory: transport))
+        context.insert(Category(name: "Public Transport", iconName: "bus", transactionType: .expense, parentCategory: transport))
+        context.insert(Category(name: "Private Hire", iconName: "car", transactionType: .expense, parentCategory: transport))
 
         // Create sample payees
         let starbucks = Payee(name: "Starbucks")

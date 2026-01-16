@@ -46,7 +46,7 @@ struct TransactionRowView: View {
 }
 
 #Preview {
-    let trsn = Transaction(amount: 1000, category: TransactionCategory(name: "Salary", iconName: "dollar", transactionType: .expense), desc: "Salary", payee: Payee(name: "Company A"), date: Date())
+    let trsn = Transaction(amount: 1000, category: Category(name: "Salary", iconName: "dollar", transactionType: .expense), desc: "Salary", payee: Payee(name: "Company A"), date: Date())
     
     TransactionRowView(transaction: trsn)
 }
