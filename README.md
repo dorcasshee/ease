@@ -2,14 +2,14 @@
 ![](media/Banner.jpg)
 
 ![iOS 17+](https://img.shields.io/badge/iOS-18%2B-blue)
-![Swift](https://img.shields.io/badge/Swift-5.9-orange)
+![Swift](https://img.shields.io/badge/Swift-6.2-orange)
 ![SwiftUI](https://img.shields.io/badge/SwiftUI-5-purple)
 ![SwiftData](https://img.shields.io/badge/SwiftData-1.0-green)
 ![Status](https://img.shields.io/badge/Status-In%20Development-yellow)
 
 ## Overview
 
-Ease is an iOS expense tracking app that removes friction from daily expense tracking. Log transactions in seconds with smart autocomplete, duplicate past entries with a swipe, and catch up days/weeks of expenses without the usual tedium.
+Ease is an iOS expense tracking app that lets you log transactions in seconds with smart autocomplete, duplicate past entries with a swipe, and catch up on days/weeks of expenses without the usual tedium.
 
 Built with SwiftUI and SwiftData using MVVM architecture.
 
