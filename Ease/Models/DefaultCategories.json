@@ -1,0 +1,160 @@
+[
+    {
+        "name": "Food & Drinks",
+        "iconName": "fork.knife",
+        "isSystemIcon": true,
+        "transactionType": "expense",
+        "colorName": "eOrange",
+        "subCategories": [
+            { "name": "Food", "iconName": "custom_roast_chicken", "isSystemIcon": false, "isDefault": true },
+            { "name": "Drinks", "iconName": "custom_soda", "isSystemIcon": false, "isDefault": false },
+            { "name": "Snacks", "iconName": "custom_french_fries", "isSystemIcon": false, "isDefault": false },
+            { "name": "Dessert", "iconName": "custom_cupcake", "isSystemIcon": false, "isDefault": false }
+        ]
+    },
+    {
+        "name": "Transportation",
+        "iconName": "tram",
+        "isSystemIcon": true,
+        "transactionType": "expense",
+        "colorName": "eTeal",
+        "subCategories": [
+            { "name": "Public Transport", "iconName": "bus", "isSystemIcon": true, "isDefault": true },
+            { "name": "Private Hire", "iconName": "car", "isSystemIcon": true, "isDefault": false },
+            { "name": "Parking", "iconName": "parkingsign", "isSystemIcon": true, "isDefault": false },
+            { "name": "Car Servicing", "iconName": "car.badge.gearshape", "isSystemIcon": true, "isDefault": false }
+        ]
+    },
+    {
+        "name": "Personal Care",
+        "iconName": "bubbles.and.sparkles",
+        "isSystemIcon": true,
+        "transactionType": "expense",
+        "colorName": "ePeony",
+        "subCategories": [
+            { "name": "Accessories", "iconName": "custom_diamond_ring", "isSystemIcon": false, "isDefault": false },
+            { "name": "Clothes", "iconName": "tshirt", "isSystemIcon": true, "isDefault": false },
+            { "name": "Cosmetics", "iconName": "custom_makeup_brush", "isSystemIcon": false, "isDefault": false },
+            { "name": "Skincare", "iconName": "custom_foundation_makeup", "isSystemIcon": false, "isDefault": false },
+            { "name": "Spa & Salon", "iconName": "custom_stones", "isSystemIcon": false, "isDefault": false },
+            { "name": "Toiletries", "iconName": "custom_tube", "isSystemIcon": false, "isDefault": false }
+        ]
+    },
+    {
+        "name": "Entertainment",
+        "iconName": "tv",
+        "isSystemIcon": true,
+        "transactionType": "expense",
+        "colorName": "eAmethyst",
+        "subCategories": [
+            { "name": "Gaming", "iconName": "gamecontroller", "isSystemIcon": true, "isDefault": false },
+            { "name": "Movies", "iconName": "film", "isSystemIcon": true, "isDefault": false },
+            { "name": "Hobbies", "iconName": "paintpalette", "isSystemIcon": true, "isDefault": false },
+            { "name": "Books", "iconName": "books.vertical", "isSystemIcon": true, "isDefault": false },
+            { "name": "Concerts", "iconName": "music.note", "isSystemIcon": true, "isDefault": false },
+            { "name": "Events", "iconName": "party.popper", "isSystemIcon": true, "isDefault": false }
+        ]
+    },
+    {
+        "name": "Living Expenses",
+        "iconName": "custom_coins",
+        "isSystemIcon": false,
+        "transactionType": "expense",
+        "colorName": "eMutedTeal",
+        "subCategories": [
+            { "name": "Bills", "iconName": "receipt", "isSystemIcon": true, "isDefault": false },
+            { "name": "Subscriptions", "iconName": "dollarsign.arrow.trianglehead.counterclockwise.rotate.90", "isSystemIcon": true, "isDefault": false },
+            { "name": "Groceries", "iconName": "custom_groceries", "isSystemIcon": false, "isDefault": false },
+            { "name": "Rent", "iconName": "key", "isSystemIcon": true, "isDefault": false },
+            { "name": "Mortgage", "iconName": "dollarsign.bank.building", "isSystemIcon": true, "isDefault": false },
+            { "name": "Taxes", "iconName": "custom_apartment", "isSystemIcon": false, "isDefault": false },
+            { "name": "Household Items", "iconName": "custom_pot", "isSystemIcon": false, "isDefault": false },
+            { "name": "Maintenance", "iconName": "custom_utilities", "isSystemIcon": false, "isDefault": false }
+        ]
+    },
+    {
+        "name": "Insurance",
+        "iconName": "checkmark.shield",
+        "isSystemIcon": true,
+        "transactionType": "expense",
+        "colorName": "eLightSmartBlue",
+        "subCategories": [
+            { "name": "Home Insurance", "iconName": "custom.house.shield", "isSystemIcon": false, "isDefault": false },
+            { "name": "Car Insurance", "iconName": "custom.car.shield", "isSystemIcon": false, "isDefault": false },
+            { "name": "Health Insurance", "iconName": "custom.cross.shield", "isSystemIcon": false, "isDefault": false },
+            { "name": "Life Insurance", "iconName": "custom.heart.shield", "isSystemIcon": false, "isDefault": false },
+            { "name": "PA Insurance", "iconName": "custom.motorcycle.shield", "isSystemIcon": false, "isDefault": false },
+        ]
+    },
+    {
+        "name": "Health & Fitness",
+        "iconName": "custom_heart_with_pulse",
+        "isSystemIcon": false,
+        "transactionType": "expense",
+        "colorName": "eOlive",
+        "subCategories": [
+            { "name": "Consults", "iconName": "stethoscope", "isSystemIcon": true, "isDefault": false },
+            { "name": "Medication", "iconName": "pills", "isSystemIcon": true, "isDefault": false },
+            { "name": "Supplements", "iconName": "custom_leaf", "isSystemIcon": false, "isDefault": false },
+            { "name": "Dental Care", "iconName": "custom_tooth", "isSystemIcon": false, "isDefault": false },
+            { "name": "Vision Care", "iconName": "eyeglasses", "isSystemIcon": true, "isDefault": false },
+            { "name": "Therapy", "iconName": "heart", "isSystemIcon": true, "isDefault": false },
+            { "name": "Gym", "iconName": "dumbbell", "isSystemIcon": true, "isDefault": false }
+        ]
+    },
+    {
+        "name": "Travel",
+        "iconName": "airplane.up.forward",
+        "isSystemIcon": true,
+        "transactionType": "expense",
+        "colorName": "eBronze",
+        "subCategories": [
+            { "name": "Flights", "iconName": "airplane.ticket", "isSystemIcon": true, "isDefault": true },
+            { "name": "Accommodation", "iconName": "custom_exterior", "isSystemIcon": false, "isDefault": false },
+            { "name": "Travel Insurance", "iconName": "custom.airplane.up.forward.shield", "isSystemIcon": false, "isDefault": false },
+            { "name": "Rentals", "iconName": "tag", "isSystemIcon": true, "isDefault": false },
+            { "name": "Roaming", "iconName": "wifi", "isSystemIcon": true, "isDefault": false },
+            { "name": "Tours & Activities", "iconName": "figure.hiking", "isSystemIcon": true, "isDefault": false }
+        ]
+    },
+    {
+        "name": "Tech",
+        "iconName": "laptopcomputer",
+        "isSystemIcon": true,
+        "transactionType": "expense",
+        "colorName": "eSmartBlue",
+        "subCategories": [
+            { "name": "Tech Accessories", "iconName": "headphones.over.ear", "isSystemIcon": true, "isDefault": true },
+            { "name": "Devices", "iconName": "macbook.and.iphone", "isSystemIcon": true, "isDefault": false },
+            { "name": "Software", "iconName": "apple.terminal", "isSystemIcon": true, "isDefault": false },
+            { "name": "Security", "iconName": "lock.shield", "isSystemIcon": true, "isDefault": false }
+        ]
+    },
+    {
+        "name": "Education",
+        "iconName": "graduationcap",
+        "isSystemIcon": true,
+        "transactionType": "expense",
+        "colorName": "ePink",
+        "subCategories": [
+            { "name": "Fees", "iconName": "dollarsign", "isSystemIcon": true, "isDefault": false },
+            { "name": "Materials", "iconName": "pencil.and.ruler", "isSystemIcon": true, "isDefault": false },
+            { "name": "Courses", "iconName": "inset.filled.rectangle.and.person.filled", "isSystemIcon": true, "isDefault": false }
+        ]
+    },
+    {
+        "name": "Income",
+        "iconName": "custom_dollar_bag",
+        "isSystemIcon": false,
+        "transactionType": "income",
+        "colorName": "eMutedTeal",
+        "subCategories": [
+            { "name": "Salary", "iconName": "briefcase", "isSystemIcon": true, "isDefault": true },
+            { "name": "Freelance", "iconName": "laptopcomputer", "isSystemIcon": true, "isDefault": false },
+            { "name": "Gifts", "iconName": "gift", "isSystemIcon": true, "isDefault": false },
+            { "name": "Dividends", "iconName": "chart.line.uptrend.xyaxis", "isSystemIcon": true, "isDefault": false },
+            { "name": "Rental Income", "iconName": "dollarsign.bank.building", "isSystemIcon": true, "isDefault": false }
+        ]
+    }
+]
+
