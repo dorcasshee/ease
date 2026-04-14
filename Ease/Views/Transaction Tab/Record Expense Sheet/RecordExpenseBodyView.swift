@@ -32,8 +32,21 @@ struct RecordExpenseBodyView: View {
                     Label("Category:", systemImage: "circle.grid.2x2")
                         .foregroundStyle(.eBlack)
                     
-                    Label(transactionVM.category?.name ?? "", systemImage: transactionVM.category?.iconName ?? "circle")
-                        .foregroundStyle(transactionVM.category?.iconName != nil ? transactionVM.transactionType.color : .eWhite)
+                    if let category = transactionVM.category {
+                        Label {
+                            Text(category.name)
+                        } icon: {
+                            if category.isSystemIcon {
+                                Image(systemName: category.iconName)
+                            } else {
+                                Image(category.iconName)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 24, height: 24)
+                            }
+                        }
+                        .foregroundStyle(.eOrange)
+                    }
                     
                     Spacer()
                 }

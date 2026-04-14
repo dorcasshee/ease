@@ -18,7 +18,7 @@ import SwiftData
     var isSelected: Bool = false
     var date: Date
     var transactionType: TransactionType = .expense
-    var selectedCategories: [TransactionType: Category] = [:]
+    var selectedCategories: [TransactionType: SubCategory] = [:]
     var desc: String = ""
     var payeeName: String = ""
     var isRecurring: Bool = false
@@ -42,7 +42,7 @@ import SwiftData
     var isSuggestionSelected: Bool = false
     
     // computed properties
-    var category: Category? {
+    var category: SubCategory? {
         selectedCategories[transactionType]
     }
     
@@ -88,7 +88,6 @@ import SwiftData
         case create, update
     }
     
-    // init
     init() {
         self.payeeViewModel = PayeeViewModel()
         self.date = Date()

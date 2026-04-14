@@ -11,9 +11,7 @@ import SwiftData
 struct RecordExpenseView: View {
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
-    
-    @Query private var categories: [Category]
-    
+        
     @State private var categoryVM = CategoryViewModel()
     @Bindable var transactionVM: TransactionViewModel
     

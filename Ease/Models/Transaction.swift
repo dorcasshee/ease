@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 @Model
-class Transaction {
+final class Transaction {
     var amount: Double
     var desc: String?
     var date: Date
@@ -23,10 +23,11 @@ class Transaction {
         return sign + formatted
     }
     
-    @Relationship var category: Category
+    @Relationship var category: SubCategory
     @Relationship var payee: Payee?
+    @Relationship var tags: [Tag] = []
     
-    init(amount: Double, category: Category, desc: String?, payee: Payee?, date: Date, isRecurring: Bool = false) {
+    init(amount: Double, category: SubCategory, desc: String?, payee: Payee?, date: Date, isRecurring: Bool = false) {
         self.amount = amount
         self.category = category
         self.desc = desc
@@ -34,6 +35,17 @@ class Transaction {
         self.date = date
         self.createdAt = Date()
         self.isRecurring = isRecurring
+    }
+}
+
+@Model
+final class Tag {
+    var name: String
+    
+    @Relationship(inverse: \Transaction.tags) var transactions: [Transaction] = []
+    
+    init(name: String) {
+        self.name = name
     }
 }
 

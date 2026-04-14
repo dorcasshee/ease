@@ -19,7 +19,7 @@
         "transactionType": "expense",
         "colorName": "eTeal",
         "subCategories": [
-            { "name": "Public Transport", "iconName": "bus", "isSystemIcon": true, "isDefault": true },
+            { "name": "Public Transport", "iconName": "bus", "isSystemIcon": true, "isDefault": false },
             { "name": "Private Hire", "iconName": "car", "isSystemIcon": true, "isDefault": false },
             { "name": "Parking", "iconName": "parkingsign", "isSystemIcon": true, "isDefault": false },
             { "name": "Car Servicing", "iconName": "car.badge.gearshape", "isSystemIcon": true, "isDefault": false }
@@ -109,7 +109,7 @@
         "transactionType": "expense",
         "colorName": "eBronze",
         "subCategories": [
-            { "name": "Flights", "iconName": "airplane.ticket", "isSystemIcon": true, "isDefault": true },
+            { "name": "Flights", "iconName": "airplane.ticket", "isSystemIcon": true, "isDefault": false },
             { "name": "Accommodation", "iconName": "custom_exterior", "isSystemIcon": false, "isDefault": false },
             { "name": "Travel Insurance", "iconName": "custom.airplane.up.forward.shield", "isSystemIcon": false, "isDefault": false },
             { "name": "Rentals", "iconName": "tag", "isSystemIcon": true, "isDefault": false },
@@ -124,7 +124,7 @@
         "transactionType": "expense",
         "colorName": "eSmartBlue",
         "subCategories": [
-            { "name": "Tech Accessories", "iconName": "headphones.over.ear", "isSystemIcon": true, "isDefault": true },
+            { "name": "Tech Accessories", "iconName": "headphones.over.ear", "isSystemIcon": true, "isDefault": false },
             { "name": "Devices", "iconName": "macbook.and.iphone", "isSystemIcon": true, "isDefault": false },
             { "name": "Software", "iconName": "apple.terminal", "isSystemIcon": true, "isDefault": false },
             { "name": "Security", "iconName": "lock.shield", "isSystemIcon": true, "isDefault": false }
