@@ -12,7 +12,7 @@ struct TransactionRowView: View {
     
     var body: some View {
         HStack(alignment: .top) {
-            CategoryIconView(imageName: transaction.category.iconName, color: transaction.category.transactionType.color)
+            CategoryIconView(imageName: transaction.category.iconName, color: Color(transaction.category.colorName), isSystemIcon: transaction.category.isSystemIcon)
                 .padding(.trailing, 10)
             
             VStack(alignment: .leading) {
@@ -46,7 +46,8 @@ struct TransactionRowView: View {
 }
 
 #Preview {
-    let trsn = Transaction(amount: 1000, category: Category(name: "Salary", iconName: "dollar", transactionType: .expense), desc: "Salary", payee: Payee(name: "Company A"), date: Date())
+    let parent = ParentCategory(name: "Income", iconName: "dollar", isSystemIcon: true, colorName: "eOrange", transactionType: .income)
+    let trsn = Transaction(amount: 1000, category: SubCategory(name: "Salary", iconName: "dollar", isSystemIcon: true, isDefault: false, parent: parent), desc: "Salary", payee: Payee(name: "Company A"), date: Date())
     
     TransactionRowView(transaction: trsn)
 }
