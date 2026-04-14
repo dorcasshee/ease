@@ -13,13 +13,4 @@ enum TransactionType: String, Identifiable, Codable {
     var id: String { rawValue }
     
     static let allCases: [TransactionType] = [.expense, .income]
-    
-    var color: Color {
-        switch self {
-        case .expense:
-            return .eOrange
-        case .income:
-            return .ePink
-        }
-    }
 }
