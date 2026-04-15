@@ -16,11 +16,12 @@ import SwiftData
     var colorName: String?
     var transactionType: TransactionType = .expense
     var showSheet: Bool = false
+    var collapsedSections: Set<String> = []
     
     func createParentCategory(context: ModelContext) {
         guard let name = name, let iconName = iconName else { return }
         
-        let newCategory = ParentCategory(name: name, iconName: iconName, isSystemIcon: isSystemIcon, colorName: "eOrange", transactionType: transactionType)
+        let newCategory = ParentCategory(id: UUID().uuidString, name: name, iconName: iconName, isSystemIcon: isSystemIcon, colorName: "eOrange", transactionType: transactionType)
         
         context.insert(newCategory)
     }
@@ -28,7 +29,7 @@ import SwiftData
     func createSubCategory(context: ModelContext, parentCategory: ParentCategory) {
         guard let name = name, let iconName = iconName else { return }
         
-        let newCategory = SubCategory(name: name, iconName: iconName, isSystemIcon: isSystemIcon, isDefault: isDefault, colorName: parentCategory.colorName, parent: parentCategory)
+        let newCategory = SubCategory(id: UUID().uuidString, name: name, iconName: iconName, isSystemIcon: isSystemIcon, isDefault: isDefault, colorName: parentCategory.colorName, parent: parentCategory)
         
         context.insert(newCategory)
     }
@@ -63,5 +64,17 @@ import SwiftData
         guard let category = defaultCategories.first(where: { $0.transactionType == type }) else { throw AppError.noDefaultCategory }
         
         return category
+    }
+    
+    func isAllCollapsed(parentCount: Int) -> Bool {
+        collapsedSections.count == parentCount;
+    }
+    
+    func toggleSection(parentID: String) {
+        if collapsedSections.contains(parentID) {
+            collapsedSections.remove(parentID)
+        } else {
+            collapsedSections.insert(parentID)
+        }
     }
 }

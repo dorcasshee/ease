@@ -46,8 +46,8 @@ struct TransactionRowView: View {
 }
 
 #Preview {
-    let parent = ParentCategory(name: "Income", iconName: "dollar", isSystemIcon: true, colorName: "eOrange", transactionType: .income)
-    let trsn = Transaction(amount: 1000, category: SubCategory(name: "Salary", iconName: "dollar", isSystemIcon: true, isDefault: false, parent: parent), desc: "Salary", payee: Payee(name: "Company A"), date: Date())
+    let parent = ParentCategory(id: "preview-parent", name: "Income", iconName: "dollar", isSystemIcon: true, colorName: "eOrange", transactionType: .income)
+    let trsn = Transaction(amount: 1000, category: SubCategory(id: "preview-sub", name: "Salary", iconName: "dollar", isSystemIcon: true, isDefault: false, parent: parent), desc: "Salary", payee: Payee(name: "Company A"), date: Date())
     
     TransactionRowView(transaction: trsn)
 }
