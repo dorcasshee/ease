@@ -1,0 +1,16 @@
+{
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "localizable" : true,
+    "symbol-rendering-intent" : "template"
+  },
+  "symbols" : [
+    {
+      "filename" : "headphones.over.ear.svg",
+      "idiom" : "universal"
+    }
+  ]
+}
