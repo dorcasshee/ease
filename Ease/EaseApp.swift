@@ -47,7 +47,8 @@ extension ModelContainer {
            let data = try? Data(contentsOf: url),
            let dataObjects = try? JSONDecoder().decode([ParentCategoryDTO].self, from: data) {
             for dataObject in dataObjects {
-                let parent = ParentCategory(name: dataObject.name,
+                let parent = ParentCategory(id: dataObject.id,
+                                            name: dataObject.name,
                                             iconName: dataObject.iconName,
                                             isSystemIcon: dataObject.isSystemIcon,
                                             colorName: dataObject.colorName,
@@ -55,7 +56,8 @@ extension ModelContainer {
                 context.insert(parent)
                 
                 for subDataObject in dataObject.subCategories {
-                    let sub = SubCategory(name: subDataObject.name,
+                    let sub = SubCategory(id: subDataObject.id,
+                                          name: subDataObject.name,
                                           iconName: subDataObject.iconName,
                                           isSystemIcon: subDataObject.isSystemIcon,
                                           isDefault: subDataObject.isDefault,

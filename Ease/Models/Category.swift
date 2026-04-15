@@ -10,6 +10,7 @@ import SwiftData
 
 @Model
 final class ParentCategory {
+    var id: String = ""
     var name: String
     var iconName: String
     var isSystemIcon: Bool
@@ -18,7 +19,8 @@ final class ParentCategory {
     
     @Relationship(deleteRule: .cascade, inverse: \SubCategory.parent) var subCategories: [SubCategory] = []
     
-    init(name: String, iconName: String, isSystemIcon: Bool, colorName: String, transactionType: TransactionType) {
+    init(id: String, name: String, iconName: String, isSystemIcon: Bool, colorName: String, transactionType: TransactionType) {
+        self.id = id
         self.name = name
         self.iconName = iconName
         self.isSystemIcon = isSystemIcon
@@ -29,6 +31,7 @@ final class ParentCategory {
 
 @Model
 final class SubCategory {
+    var id: String = ""
     var name: String
     var iconName: String
     var isSystemIcon: Bool
@@ -41,7 +44,8 @@ final class SubCategory {
     
     @Relationship(inverse: \Transaction.category) var transactions: [Transaction] = []
     
-    init(name: String, iconName: String, isSystemIcon: Bool, isDefault: Bool, colorName: String? = nil, parent: ParentCategory) {
+    init(id: String, name: String, iconName: String, isSystemIcon: Bool, isDefault: Bool, colorName: String? = nil, parent: ParentCategory) {
+        self.id = id
         self.name = name
         self.iconName = iconName
         self.isSystemIcon = isSystemIcon
@@ -52,6 +56,7 @@ final class SubCategory {
 }
 
 struct ParentCategoryDTO: Codable {
+    let id: String
     let name: String
     let iconName: String
     let isSystemIcon: Bool
@@ -61,6 +66,7 @@ struct ParentCategoryDTO: Codable {
 }
 
 struct SubCategoryDTO: Codable {
+    let id: String
     let name: String
     let iconName: String
     let isSystemIcon: Bool
