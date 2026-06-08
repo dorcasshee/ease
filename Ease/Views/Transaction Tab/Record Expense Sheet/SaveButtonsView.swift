@@ -6,12 +6,13 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct SaveButtonsView: View {
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
     
-    @Bindable var transactionVM: TransactionViewModel
+    @Bindable var transactionFormVM: TransactionFormViewModel
     @Bindable var categoryVM: CategoryViewModel
     
     @State private var buttonTapCount: Int = 0
@@ -21,7 +22,7 @@ struct SaveButtonsView: View {
         VStack(spacing: 10) {
             Button {
                 buttonTapCount += 1
-                if transactionVM.saveTransaction(context: context) {
+                if transactionFormVM.saveTransaction(context: context) {
                     dismiss()
                 }
             } label: {
@@ -32,7 +33,7 @@ struct SaveButtonsView: View {
             
             Button {
                 buttonTapCount += 1
-                if transactionVM.saveAndResetForAnother(context: context, categoryVM: categoryVM) {
+                if transactionFormVM.saveAndResetForAnother(context: context, categoryVM: categoryVM) {
                     focusedField.wrappedValue = .amount
                 }
             } label: {
@@ -41,11 +42,11 @@ struct SaveButtonsView: View {
                     .roundButtonStyle(color: .eBlack)
             }
             
-            if transactionVM.trsnMode == .update, let trsnToEdit = transactionVM.trsnToEdit {
+            if transactionFormVM.isEditing, let transactionToEdit = transactionFormVM.transactionToEdit {
                 Button {
                     buttonTapCount += 1
                     dismiss()
-                    transactionVM.deleteTransaction(context: context, item: trsnToEdit)
+                    transactionFormVM.deleteTransaction(context: context, item: transactionToEdit)
                 } label: {
                     Text("Delete")
                         .frame(maxWidth: .infinity)

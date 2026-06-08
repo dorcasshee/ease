@@ -8,16 +8,17 @@
 import SwiftUI
 
 struct TabBarView: View {
-    @State private var transactionVM = TransactionViewModel()
+    @State private var transactionListVM = TransactionListViewModel()
+    @State private var transactionFormVM = TransactionFormViewModel()
     
     var body: some View {
         TabView() {
             Tab(String(), systemImage: "house") {
-                DashboardTab(transactionVM: transactionVM)
+                DashboardTab(transactionListVM: transactionListVM)
             }
                         
             Tab(String(), systemImage: "list.bullet") {
-                TransactionTab(transactionVM: transactionVM)
+                TransactionTab(transactionListVM: transactionListVM, transactionFormVM: transactionFormVM)
             }
             
             Tab(String(), systemImage: "gearshape") {

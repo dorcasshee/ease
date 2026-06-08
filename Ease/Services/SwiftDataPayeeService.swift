@@ -1,21 +1,15 @@
 //
-//  PayeeViewModel.swift
+//  SwiftDataPayeeService.swift
 //  Ease
 //
-//  Created by Dorcas Shee on 7/12/25.
+//  Created by Dorcas Shee on 8/6/26.
 //
 
 import Foundation
 import SwiftData
 
-@Observable
-class PayeeViewModel {
-    /*
-     This view model contains manages create, update, and delete operations for Payees.
-     */
-    
-    func getOrCreatePayee(context: ModelContext, name: String) -> Payee {
-        //check database if payee exist
+class SwiftDataPayeeService: PayeeRepository {
+    func getOrCreatePayee(name: String, context: ModelContext) -> Payee {
         let descriptor = FetchDescriptor<Payee>(predicate: #Predicate { $0.name == name })
         
         if let existingPayee = try? context.fetch(descriptor).first {
@@ -28,8 +22,8 @@ class PayeeViewModel {
         }
     }
     
-    func deletePayeeIfOrphaned(context: ModelContext, payeeID: PersistentIdentifier) {
-        guard let payee = context.model(for: payeeID) as? Payee else { return }
+    func deletePayeeIfOrphaned(id: PersistentIdentifier, context: ModelContext) {
+        guard let payee = context.model(for: id) as? Payee else { return }
         
         let payeeName = payee.name
         let descriptor = FetchDescriptor<Transaction>(predicate: #Predicate { $0.payee?.name == payeeName })

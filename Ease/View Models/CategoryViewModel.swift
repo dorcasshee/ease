@@ -9,29 +9,36 @@ import Foundation
 import SwiftData
 
 @Observable class CategoryViewModel {
+    // repositories
+    var categoryRepository: CategoryRepository
+    
     var name: String?
     var iconName: String?
     var isDefault: Bool = false
     var isSystemIcon: Bool = true
     var colorName: String?
     var transactionType: TransactionType = .expense
-    var showSheet: Bool = false
     var collapsedSections: Set<String> = []
+    
+    // UI state
+    var showSheet: Bool = false
+    var showError: Bool = false
+    var error: AppError? = nil
+    
+    init(categoryRepository: CategoryRepository = SwiftDataCategoryService()) {
+        self.categoryRepository = categoryRepository
+    }
     
     func createParentCategory(context: ModelContext) {
         guard let name = name, let iconName = iconName else { return }
         
-        let newCategory = ParentCategory(id: UUID().uuidString, name: name, iconName: iconName, isSystemIcon: isSystemIcon, colorName: "eOrange", transactionType: transactionType)
-        
-        context.insert(newCategory)
+        categoryRepository.createParentCategory(context: context, name: name, iconName: iconName, isSystemIcon: isSystemIcon, colorName: colorName ?? "eOrange", transactionType: transactionType)
     }
     
     func createSubCategory(context: ModelContext, parentCategory: ParentCategory) {
         guard let name = name, let iconName = iconName else { return }
         
-        let newCategory = SubCategory(id: UUID().uuidString, name: name, iconName: iconName, isSystemIcon: isSystemIcon, isDefault: isDefault, colorName: parentCategory.colorName, parent: parentCategory)
-        
-        context.insert(newCategory)
+        categoryRepository.createSubCategory(context: context, parentCategory: parentCategory, name: name, iconName: iconName, isSystemIcon: isSystemIcon, isDefault: isDefault, colorName: colorName ?? parentCategory.colorName)
     }
     
     func sortParentCategories(parents: [ParentCategory], type: TransactionType) -> [ParentCategory] {
@@ -39,18 +46,14 @@ import SwiftData
             .sorted(by: { $0.name < $1.name })
     }
     
-    func getMostFrequentCategories(context: ModelContext, limit: Int = 8) throws -> [SubCategory] {
-        let descriptor = FetchDescriptor<SubCategory>(predicate: #Predicate { $0.parent?.transactionType == transactionType })
-        let subCategories = try context.fetch(descriptor)
-        
-        return subCategories.sorted {
-            if $0.transactions.count == $1.transactions.count {
-                return $0.name < $1.name
-            }
-            return $0.transactions.count > $1.transactions.count
+    func getMostFrequentCategories(context: ModelContext, limit: Int = 8, transactionType: TransactionType) throws -> [SubCategory] {
+        do {
+            return try categoryRepository.getMostFrequentCategories(context: context, limit: limit, transactionType: transactionType)
+        } catch {
+            self.error = .unexpectedError
+            showError = true
+            return []
         }
-        .prefix(limit)
-        .map { $0 }
     }
     
     func sortedSubCategories(parent: ParentCategory) -> [SubCategory] {
@@ -58,12 +61,7 @@ import SwiftData
     }
     
     func getDefaultCategory(for type: TransactionType, context: ModelContext) throws -> SubCategory {
-        let descriptor = FetchDescriptor<SubCategory> ( predicate: #Predicate { $0.isDefault == true })
-        let defaultCategories = try context.fetch(descriptor)
-        
-        guard let category = defaultCategories.first(where: { $0.transactionType == type }) else { throw AppError.noDefaultCategory }
-        
-        return category
+        try categoryRepository.getDefaultCategory(context: context, for: type)
     }
     
     func isAllCollapsed(parentCount: Int) -> Bool {

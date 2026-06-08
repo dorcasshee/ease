@@ -7,17 +7,36 @@
 
 import SwiftUI
 import SwiftData
+import Charts
 
 struct DashboardTab: View {
-    var transactionVM: TransactionViewModel
+    var transactionListVM: TransactionListViewModel
     
     var body: some View {
         VStack {
-            MonthPickerView(transactionVM: transactionVM)
+            MonthPickerView(transactionListVM: transactionListVM)
             
             Spacer()
             
-            Text("Dashboard")
+            if !transactionListVM.expenseTrsnsByCategory.isEmpty {
+                HStack {
+                    Text("Expenses By Category")
+                        .font(.title3.bold())
+                    
+                    Spacer()
+                }
+                
+                Chart(transactionListVM.expenseTrsnsByCategory, id: \.category.id) { trsn in
+                    SectorMark(angle: .value(trsn.category.name, trsn.total),
+                               innerRadius: .ratio(0.6),
+                               angularInset: 2)
+                        .cornerRadius(5)
+                        .foregroundStyle(Color(trsn.category.colorName))
+                }
+                .scaledToFit()
+            } else {
+                Text("Dashboard")
+            }
             
             Spacer()
         }
@@ -26,6 +45,6 @@ struct DashboardTab: View {
 }
 
 #Preview {
-    DashboardTab(transactionVM: TransactionViewModel())
+    DashboardTab(transactionListVM: TransactionListViewModel())
         .modelContainer(.preview)
 }

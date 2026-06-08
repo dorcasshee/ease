@@ -13,7 +13,7 @@ struct RecordExpenseView: View {
     @Environment(\.dismiss) private var dismiss
         
     @State private var categoryVM = CategoryViewModel()
-    @Bindable var transactionVM: TransactionViewModel
+    @Bindable var transactionFormVM: TransactionFormViewModel
     
     @State private var buttonTapCount: Int = 0
     @FocusState private var focusedField: FocusField?
@@ -26,10 +26,10 @@ struct RecordExpenseView: View {
         ScrollView {
             DismissButton()
             
-            Text( transactionVM.trsnMode == .create ? "New Transaction" : "Edit Transaction")
+            Text( transactionFormVM.isEditing ? "Edit Transaction" : "New Transaction")
                 .font(.headline).fontWeight(.regular)
             
-            TextField("$0.00", value: $transactionVM.amount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
+            TextField("$0.00", value: $transactionFormVM.amount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
                 .focused($focusedField, equals: .amount)
                 .font(.system(size: 50, weight: .bold))
                 .keyboardType(.decimalPad)
@@ -37,7 +37,7 @@ struct RecordExpenseView: View {
                 .minimumScaleFactor(0.6)
                 .padding()
             
-            Picker("Select transaction type", selection: $transactionVM.transactionType) {
+            Picker("Select transaction type", selection: $transactionFormVM.transactionType) {
                 ForEach(TransactionType.allCases) { type in
                     Text(type.rawValue.capitalized)
                         .tag(type)
@@ -48,34 +48,34 @@ struct RecordExpenseView: View {
             .padding(.bottom)
             .frame(width: 250)
             
-            RecordExpenseBodyView(categoryVM: categoryVM, transactionVM: transactionVM, focusedField: $focusedField)
+            RecordExpenseBodyView(categoryVM: categoryVM, transactionFormVM: transactionFormVM, focusedField: $focusedField)
         }
         .scrollIndicators(.hidden)
         .scrollBounceBehavior(.basedOnSize)
         .padding(.top)
         .padding(.horizontal)
         .dismissKeyboardOnTap()
-        .alert(transactionVM.valError?.errorTitle ?? "Error", isPresented: $transactionVM.showError) {
+        .alert(transactionFormVM.validationError?.errorTitle ?? "Error", isPresented: $transactionFormVM.showError) {
             Button("OK", role: .cancel) {}
         } message: {
-            Text(transactionVM.valError?.errorMessage ?? "An unexpected error has occurred. Please try again.")
+            Text(transactionFormVM.validationError?.errorMessage ?? "An unexpected error has occurred. Please try again.")
         }
         .onAppear {
-            if transactionVM.trsnMode == .create {
+            if !transactionFormVM.isEditing {
                 focusedField = .amount
             }
             
-            if transactionVM.category == nil {
-                transactionVM.selectedCategories[transactionVM.transactionType] = try? categoryVM.getDefaultCategory(for: transactionVM.transactionType, context: context)
+            if transactionFormVM.category == nil {
+                transactionFormVM.selectedCategories[transactionFormVM.transactionType] = try? categoryVM.getDefaultCategory(for: transactionFormVM.transactionType, context: context)
             }
         }
-        .onChange(of: transactionVM.transactionType) { _, newValue in
-            if transactionVM.selectedCategories[newValue] == nil {
-                transactionVM.selectedCategories[newValue] = try? categoryVM.getDefaultCategory(for: newValue, context: context)
+        .onChange(of: transactionFormVM.transactionType) { _, newValue in
+            if transactionFormVM.selectedCategories[newValue] == nil {
+                transactionFormVM.selectedCategories[newValue] = try? categoryVM.getDefaultCategory(for: newValue, context: context)
             }
         }
         .onDisappear {
-            transactionVM.resetForm()
+            transactionFormVM.resetForm()
         }
         .overlayPreferenceValue(BoundsPreferenceKey.self) { preferences in
             GeometryReader { geometry in
@@ -83,8 +83,8 @@ struct RecordExpenseView: View {
                     autocompleteDropdown(for: field, at: geometry[anchor])
                 }
             }
-            .animation(.easeInOut(duration: 0.25), value: transactionVM.payeeSuggestions)
-            .animation(.easeInOut(duration: 0.25), value: transactionVM.descSuggestions)
+            .animation(.easeInOut(duration: 0.25), value: transactionFormVM.payeeSuggestions)
+            .animation(.easeInOut(duration: 0.25), value: transactionFormVM.descSuggestions)
         }
         .safeAreaInset(edge: .bottom) {
             if focusedField == .amount {
@@ -110,22 +110,22 @@ struct RecordExpenseView: View {
     
     @ViewBuilder
     private func autocompleteDropdown(for field: FocusField, at frame: CGRect) -> some View {
-        let suggestions = (focusedField == .payee) ? transactionVM.payeeSuggestions :
-        (focusedField == .desc) ? transactionVM.descSuggestions : []
+        let suggestions = (focusedField == .payee) ? transactionFormVM.payeeSuggestions :
+        (focusedField == .desc) ? transactionFormVM.descSuggestions : []
         
         if !suggestions.isEmpty {
             VStack {
                 ForEach(suggestions, id: \.self) { item in
                     Button {
                         if field == .payee {
-                            transactionVM.payeeName = item
-                            transactionVM.payeeSuggestions = []
+                            transactionFormVM.payeeName = item
+                            transactionFormVM.payeeSuggestions = []
                         } else if field == .desc {
-                            transactionVM.desc = item
-                            transactionVM.descSuggestions = []
+                            transactionFormVM.desc = item
+                            transactionFormVM.descSuggestions = []
                         }
                         
-                        transactionVM.isSuggestionSelected = true
+                        transactionFormVM.isSuggestionSelected = true
                     } label: {
                         AutocompleteRowView(text: item)
                     }
@@ -230,10 +230,10 @@ extension View {
 }
 
 private struct RecordExpensePreviewWrapper: View {
-    @State private var transactionVM = TransactionViewModel()
+    @State private var transactionFormVM = TransactionFormViewModel()
 
     var body: some View {
-        RecordExpenseView(transactionVM: transactionVM)
+        RecordExpenseView(transactionFormVM: transactionFormVM)
     }
 }
 

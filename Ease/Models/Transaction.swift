@@ -25,7 +25,6 @@ final class Transaction {
     
     @Relationship var category: SubCategory
     @Relationship var payee: Payee?
-    @Relationship var tags: [Tag] = []
     
     init(amount: Double, category: SubCategory, desc: String?, payee: Payee?, date: Date, isRecurring: Bool = false) {
         self.amount = amount
@@ -35,17 +34,6 @@ final class Transaction {
         self.date = date
         self.createdAt = Date()
         self.isRecurring = isRecurring
-    }
-}
-
-@Model
-final class Tag {
-    var name: String
-    
-    @Relationship(inverse: \Transaction.tags) var transactions: [Transaction] = []
-    
-    init(name: String) {
-        self.name = name
     }
 }
 

@@ -10,31 +10,32 @@ import SwiftData
 
 struct TransactionTab: View {
     @Query(sort: \Transaction.date, order: .reverse) private var transactions: [Transaction]
-    @Bindable var transactionVM: TransactionViewModel
+    @Bindable var transactionListVM: TransactionListViewModel
+    @Bindable var transactionFormVM: TransactionFormViewModel
     @State private var buttonTapCount: Int = 0
     
     var body: some View {
         VStack {
-            MonthPickerView(transactionVM: transactionVM)
+            MonthPickerView(transactionListVM: transactionListVM)
             
-            Text("^[\(transactionVM.currentMonthTransactions.count) transaction](inflect:true)")
+            Text("^[\(transactionListVM.currentMonthTransactions.count) transaction](inflect:true)")
                 .font(.callout)
                 .foregroundStyle(.secondary)
                 .padding(.top, 5)
                 .padding(.bottom)
             
-            BalanceCardView(transactionVM: transactionVM)
+            BalanceCardView(transactionListVM: transactionListVM)
                 .padding(.horizontal, 10)
             
 //            SearchFilterRowView()
             
-            TransactionListView(transactionVM: transactionVM, transactions: transactions)
+            TransactionListView(transactionListVM: transactionListVM, transactionFormVM: transactionFormVM, transactions: transactions)
                 .padding(.horizontal, -10)
                 .overlay(alignment: .bottomTrailing) {
                     Button {
                         buttonTapCount += 1
-                        transactionVM.showSheet = true
-                        transactionVM.trsnMode = .create
+                        transactionFormVM.resetForm()
+                        transactionFormVM.showSheet = true
                     } label: {
                         ZStack {
                             Circle()
@@ -46,23 +47,23 @@ struct TransactionTab: View {
                                 .font(.title2.bold())
                         }
                     }
-                    .sheet(isPresented: $transactionVM.showSheet) {
-                        RecordExpenseView(transactionVM: transactionVM)
+                    .sheet(isPresented: $transactionFormVM.showSheet) {
+                        RecordExpenseView(transactionFormVM: transactionFormVM)
                     }
                     .sensoryFeedback(.selection, trigger: buttonTapCount)
                 }
         }
         .padding()
         .onAppear {
-            if transactionVM.currentMonthTransactions.isEmpty {
-                transactionVM.getTransactionsByMonth(transactions: transactions)
+            if transactionListVM.currentMonthTransactions.isEmpty {
+                transactionListVM.getTransactionsByMonth(transactions: transactions)
             }
         }
-        .onChange(of: transactionVM.currentDate) {
-            transactionVM.getTransactionsByMonth(transactions: transactions)
+        .onChange(of: transactionListVM.currentDate) {
+            transactionListVM.getTransactionsByMonth(transactions: transactions)
         }
         .onChange(of: transactions) {
-            transactionVM.getTransactionsByMonth(transactions: transactions)
+            transactionListVM.getTransactionsByMonth(transactions: transactions)
         }
     }
 }
@@ -98,6 +99,6 @@ struct SearchFilterRowView: View {
 }
 
 #Preview {
-    TransactionTab(transactionVM: TransactionViewModel())
+    TransactionTab(transactionListVM: TransactionListViewModel(), transactionFormVM: TransactionFormViewModel())
         .modelContainer(.preview)
 }

@@ -9,7 +9,7 @@ import Foundation
 
 enum AppError: Error {
     // transaction errors
-    case missingCategory, invalidAmount
+    case missingCategory
     
     // category errors
     case noDefaultCategory
@@ -20,7 +20,6 @@ enum AppError: Error {
     var errorTitle: String {
         switch self {
         case .missingCategory: return "Missing Category"
-        case .invalidAmount: return "Invalid Amount"
         case .noDefaultCategory: return "No Default Category Found"
         case .unexpectedError: return "Unexpected Error"
         }
@@ -29,7 +28,6 @@ enum AppError: Error {
     var errorMessage: String {
         switch self {
         case .missingCategory: return "Please select a category."
-        case .invalidAmount: return "Amount should be more than $0.00."
         case .noDefaultCategory: return "There is no default category found."
         case .unexpectedError: return "An unexpected error occurred while saving this transaction. Please try again."
         }

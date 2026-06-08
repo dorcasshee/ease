@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 @Model
-class Payee {
+final class Payee {
     @Attribute(.unique) var name: String
     @Relationship(deleteRule: .nullify, inverse: \Transaction.payee) var transactions: [Transaction] = []
     

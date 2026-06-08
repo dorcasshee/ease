@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct BalanceCardView: View {
-    var transactionVM: TransactionViewModel
+    var transactionListVM: TransactionListViewModel
     var font: Font {
-        if transactionVM.maxFigCount >= 11 {
+        if transactionListVM.maxFigCount >= 11 {
             return .subheadline
-        } else if transactionVM.maxFigCount >= 9 {
+        } else if transactionListVM.maxFigCount >= 9 {
             return .headline
         } else {
             return .title3
@@ -21,15 +21,15 @@ struct BalanceCardView: View {
 
     var body: some View {
         HStack {
-            BalanceItemView(amount: transactionVM.currentMonthIncome, label: "Income", font: font)
+            BalanceItemView(amount: transactionListVM.currentMonthIncome, label: "Income", font: font)
 
             Spacer()
 
-            BalanceItemView(amount: transactionVM.currentMonthExpense, label: "Expense", font: font)
+            BalanceItemView(amount: transactionListVM.currentMonthExpense, label: "Expense", font: font)
 
             Spacer()
 
-            BalanceItemView(amount: transactionVM.currentMonthBalance, label: "Balance", font: font)
+            BalanceItemView(amount: transactionListVM.currentMonthBalance, label: "Balance", font: font)
         }
         .padding(.horizontal, 25) 
         .padding(.vertical)
@@ -60,5 +60,5 @@ struct BalanceItemView: View {
 }
 
 #Preview {
-    BalanceCardView(transactionVM: TransactionViewModel())
+    BalanceCardView(transactionListVM: TransactionListViewModel())
 }

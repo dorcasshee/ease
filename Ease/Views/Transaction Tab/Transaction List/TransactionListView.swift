@@ -10,22 +10,23 @@ import SwiftData
 
 struct TransactionListView: View {
     @Environment(\.modelContext) private var context
-    @Bindable var transactionVM: TransactionViewModel
+    @Bindable var transactionListVM: TransactionListViewModel
+    @Bindable var transactionFormVM: TransactionFormViewModel
     @State private var buttonTapCount: Int = 0
     var transactions: [Transaction]
     
     var body: some View {
-        if transactionVM.currentMonthTransactions.isEmpty {
+        if transactionListVM.currentMonthTransactions.isEmpty {
             ContentUnavailableView("No Transactions", systemImage: "tray", description: Text("Start tracking your expenses by tapping the + button."))
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {
-            List(transactionVM.transactionSections) { section in
+            List(transactionListVM.transactionSections) { section in
                 Section {
                     ForEach(section.transactions) { transaction in
                         Button {
                             buttonTapCount += 1
-                            transactionVM.loadTransaction(trsn: transaction, forEditing: true)
-                            transactionVM.showSheet = true
+                            transactionFormVM.loadTransactionForEditing(transaction)
+                            transactionFormVM.showSheet = true
                         } label: {
                             TransactionRowView(transaction: transaction)
                         }
@@ -34,15 +35,15 @@ struct TransactionListView: View {
                         .listRowInsets(EdgeInsets(top: 10, leading: 10, bottom: 5, trailing: 10))
                         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                             Button(role: .destructive) {
-                                transactionVM.deleteTransaction(context: context, item: transaction)
+                                transactionListVM.deleteTransaction(context: context, item: transaction)
                             } label: {
                                 Label("Delete", systemImage: "trash")
                             }
                             .tint(.eRed)
                             
                             Button {
-                                transactionVM.loadTransaction(trsn: transaction, forEditing: false)
-                                transactionVM.showSheet = true
+                                transactionFormVM.loadTransactionForDuplication(transaction)
+                                transactionFormVM.showSheet = true
                             } label: {
                                 Label("Duplicate", systemImage: "document.on.document")
                             }
@@ -65,8 +66,8 @@ struct TransactionListView: View {
             .safeAreaInset(edge: .bottom) {
                 Color.clear.frame(height: 40)
             }
-            .sheet(isPresented: $transactionVM.showSheet) {
-                RecordExpenseView(transactionVM: transactionVM)
+            .sheet(isPresented: $transactionFormVM.showSheet) {
+                RecordExpenseView(transactionFormVM: transactionFormVM)
             }
             .sensoryFeedback(.selection, trigger: buttonTapCount)
         }
@@ -80,9 +81,10 @@ struct TransactionListView: View {
     let descriptor = FetchDescriptor<Transaction>(sortBy: [SortDescriptor(\.date, order: .reverse)])
     let transactions = (try? context.fetch(descriptor)) ?? []
 
-    let transactionVM = TransactionViewModel()
-    transactionVM.getTransactionsByMonth(transactions: transactions)
+    let transactionListVM = TransactionListViewModel()
+    let transactionFormVM = TransactionFormViewModel()
+    transactionListVM.getTransactionsByMonth(transactions: transactions)
 
-    return TransactionListView(transactionVM: transactionVM, transactions: transactions)
+    return TransactionListView(transactionListVM: transactionListVM, transactionFormVM: transactionFormVM, transactions: transactions)
         .modelContainer(container)
 }

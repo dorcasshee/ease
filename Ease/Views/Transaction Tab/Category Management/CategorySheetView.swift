@@ -15,10 +15,10 @@ struct CategorySheetView: View {
     @Query private var parents: [ParentCategory]
     
     @State private var categoryVM = CategoryViewModel()
-    var transactionVM: TransactionViewModel
+    var transactionFormVM: TransactionFormViewModel
     
     private var sortedParents: [ParentCategory] {
-        categoryVM.sortParentCategories(parents: parents, type: transactionVM.transactionType)
+        categoryVM.sortParentCategories(parents: parents, type: transactionFormVM.transactionType)
     }
     
     var body: some View {
@@ -30,6 +30,15 @@ struct CategorySheetView: View {
                     .font(.title.bold())
                 
                 Spacer()
+                
+                Button {
+                    
+                } label: {
+                    Image(systemName: "plus")
+                        .font(.title)
+                        .foregroundStyle(.eBlack)
+                }
+                .padding(.trailing, 5)
                 
                 Button {
                     
@@ -64,7 +73,7 @@ struct CategorySheetView: View {
                     ForEach(sortedParents) { parent in
                         Section {
                             if !categoryVM.collapsedSections.contains(parent.id) {
-                                SubCategoryGridView(categoryVM: categoryVM, transactionVM: transactionVM, parent: parent)
+                                SubCategoryGridView(categoryVM: categoryVM, transactionFormVM: transactionFormVM, parent: parent)
                             }
                         } header: {
                             Button {
@@ -85,7 +94,7 @@ struct CategorySheetView: View {
 }
 
 #Preview {
-    CategorySheetView(transactionVM: TransactionViewModel())
+    CategorySheetView(transactionFormVM: TransactionFormViewModel())
         .modelContainer(.preview)
 }
 
@@ -94,7 +103,7 @@ struct SubCategoryGridView: View {
     @State private var buttonTapCount: Int = 0
     
     var categoryVM: CategoryViewModel
-    var transactionVM: TransactionViewModel
+    var transactionFormVM: TransactionFormViewModel
     var parent: ParentCategory
     
     let columns: [GridItem] = Array(repeating: GridItem(.flexible()), count: 4)
@@ -104,7 +113,7 @@ struct SubCategoryGridView: View {
             ForEach(categoryVM.sortedSubCategories(parent: parent)) { sub in
                 Button {
                     buttonTapCount += 1
-                    transactionVM.selectedCategories[transactionVM.transactionType] = sub
+                    transactionFormVM.selectedCategories[transactionFormVM.transactionType] = sub
                     dismiss()
                 } label: {
                     CategoryButtonView(categoryName: sub.name, imageName: sub.iconName, isSystemIcon: sub.isSystemIcon, color: Color(sub.colorName))

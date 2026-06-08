@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct DateRowView: View {
-    @Bindable var transactionVM: TransactionViewModel
+    @Bindable var transactionFormVM: TransactionFormViewModel
     @State private var buttonTapCount: Int = 0
     
     var body: some View {
@@ -16,11 +16,11 @@ struct DateRowView: View {
             Image(systemName: "calendar")
             
             ZStack(alignment: .leading) {
-                DatePicker("", selection: $transactionVM.date, displayedComponents: .date)
+                DatePicker("", selection: $transactionFormVM.date, displayedComponents: .date)
                     .labelsHidden()
                     .blendMode(.destinationOver)
                 
-                Text(transactionVM.date.formatRelativeDate())
+                Text(transactionFormVM.date.formatRelativeDate())
                     .font(.title3)
                     .allowsHitTesting(false)
             }
@@ -29,7 +29,7 @@ struct DateRowView: View {
             
             Button {
                 buttonTapCount += 1
-                transactionVM.decrementDate()
+                transactionFormVM.decrementDate()
             } label: {
                 Image(systemName: "chevron.left")
                     .foregroundStyle(.eBlack)
@@ -38,7 +38,7 @@ struct DateRowView: View {
             
             Button {
                 buttonTapCount += 1
-                transactionVM.incrementDate()
+                transactionFormVM.incrementDate()
             } label: {
                 Image(systemName: "chevron.right")
                     .foregroundStyle(.eBlack)
@@ -49,5 +49,5 @@ struct DateRowView: View {
 }
 
 #Preview {
-    DateRowView(transactionVM: TransactionViewModel())
+    DateRowView(transactionFormVM: TransactionFormViewModel())
 }

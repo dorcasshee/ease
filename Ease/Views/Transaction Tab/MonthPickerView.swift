@@ -9,13 +9,13 @@ import SwiftUI
 
 struct MonthPickerView: View {
     @State private var buttonTapCount: Int = 0
-    var transactionVM: TransactionViewModel
+    var transactionListVM: TransactionListViewModel
     
     var body: some View {
         HStack {
             Button {
                 buttonTapCount += 1
-                transactionVM.decrementMonth()
+                transactionListVM.decrementMonth()
             } label: {
                 Image(systemName: "chevron.left")
                     .foregroundStyle(.eBlack)
@@ -26,7 +26,7 @@ struct MonthPickerView: View {
             Button {
                 // TODO: MONTH PICKER
             } label: {
-                Text(transactionVM.currentDate, format: .dateTime.month(.wide).year())
+                Text(transactionListVM.currentDate, format: .dateTime.month(.wide).year())
                     .roundButtonStyle(font: .title3.weight(.bold))
             }
             
@@ -34,7 +34,7 @@ struct MonthPickerView: View {
             
             Button {
                 buttonTapCount += 1
-                transactionVM.incrementMonth()
+                transactionListVM.incrementMonth()
             } label: {
                 Image(systemName: "chevron.right")
                     .foregroundStyle(.eBlack)
@@ -46,5 +46,5 @@ struct MonthPickerView: View {
 }
 
 #Preview {
-    MonthPickerView(transactionVM: TransactionViewModel())
+    MonthPickerView(transactionListVM: TransactionListViewModel())
 }

@@ -12,7 +12,7 @@ struct RecordExpenseBodyView: View {
     @Environment(\.modelContext) private var context
     
     @Bindable var categoryVM: CategoryViewModel
-    @Bindable var transactionVM: TransactionViewModel
+    @Bindable var transactionFormVM: TransactionFormViewModel
     
     @Query private var transactions: [Transaction]
     @Query private var payees: [Payee]
@@ -32,7 +32,7 @@ struct RecordExpenseBodyView: View {
                     Label("Category:", systemImage: "circle.grid.2x2")
                         .foregroundStyle(.eBlack)
                     
-                    if let category = transactionVM.category {
+                    if let category = transactionFormVM.category {
                         Label {
                             Text(category.name)
                         } icon: {
@@ -53,24 +53,24 @@ struct RecordExpenseBodyView: View {
                 .font(.headline)
             }
             .sheet(isPresented: $categoryVM.showSheet) {
-                CategorySheetView(transactionVM: transactionVM)
+                CategorySheetView(transactionFormVM: transactionFormVM)
             }
             .sensoryFeedback(.selection, trigger: buttonTapCount)
             
             CustomDivider()
             
             HStack {
-                Label(transactionVM.category?.transactionType == .expense ? "Paid To:" : "Received From:", systemImage: "person")
+                Label(transactionFormVM.category?.transactionType == .expense ? "Paid To:" : "Received From:", systemImage: "person")
                     .font(.headline)
                     .foregroundStyle(.eBlack)
                 
-                TextField("Entity", text: $transactionVM.payeeName)
+                TextField("Entity", text: $transactionFormVM.payeeName)
                     .focused(focusedField, equals: .payee)
                     .autocorrectionDisabled(false)
                     .submitLabel(.done)
                     .font(.headline).fontWeight(.regular)
-                    .onChange(of: transactionVM.payeeName) { _, newValue in
-                        transactionVM.payeeSuggestions = transactionVM.getAutocompleteSuggestions(for: newValue, from: payees.compactMap { $0.name })
+                    .onChange(of: transactionFormVM.payeeName) { _, newValue in
+                        transactionFormVM.payeeSuggestions = transactionFormVM.getAutocompleteSuggestions(for: newValue, from: payees.compactMap { $0.name })
                     }
             }
             
@@ -80,28 +80,28 @@ struct RecordExpenseBodyView: View {
             HStack {
                 Image(systemName: "line.3.horizontal")
                 
-                TextField("Description", text: $transactionVM.desc)
+                TextField("Description", text: $transactionFormVM.desc)
                     .focused(focusedField, equals: .desc)
                     .autocorrectionDisabled(false)
                     .submitLabel(.done)
                     .font(.headline).fontWeight(.regular)
-                    .onChange(of: transactionVM.desc) { _, newValue in
-                        transactionVM.descSuggestions = transactionVM.getAutocompleteSuggestions(
+                    .onChange(of: transactionFormVM.desc) { _, newValue in
+                        transactionFormVM.descSuggestions = transactionFormVM.getAutocompleteSuggestions(
                             for: newValue,
                             from: transactions
-                                .compactMap { $0.category.transactionType == transactionVM.transactionType ? $0.desc : nil })
+                                .compactMap { $0.category.transactionType == transactionFormVM.transactionType ? $0.desc : nil })
                     }
             }
             
             CustomDivider()
                 .anchorPreference(key: BoundsPreferenceKey.self, value: .bounds) { [.desc : $0] }
             
-            DateRowView(transactionVM: transactionVM)
+            DateRowView(transactionFormVM: transactionFormVM)
             
             CustomDivider()
                 .padding(.bottom, 15)
             
-            SaveButtonsView(transactionVM: transactionVM, categoryVM: categoryVM, focusedField: focusedField)
+            SaveButtonsView(transactionFormVM: transactionFormVM, categoryVM: categoryVM, focusedField: focusedField)
         }
         .padding(.top, 10)
         .padding(.bottom, 25)
