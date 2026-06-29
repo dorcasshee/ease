@@ -21,7 +21,7 @@ final class SubCategory {
         return parent?.transactionType ?? .expense
     }
     
-    @Relationship(inverse: \Transaction.category) var transactions: [Transaction] = []
+    @Relationship(deleteRule: .deny, inverse: \Transaction.category) var transactions: [Transaction] = []
     
     init(id: String, name: String, iconName: String, isSystemIcon: Bool, isDefault: Bool, colorName: String? = nil, parent: ParentCategory) {
         self.id = id
