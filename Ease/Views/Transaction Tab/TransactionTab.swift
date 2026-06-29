@@ -9,10 +9,11 @@ import SwiftUI
 import SwiftData
 
 struct TransactionTab: View {
-    @Query(sort: \Transaction.date, order: .reverse) private var transactions: [Transaction]
     @Bindable var transactionListVM: TransactionListViewModel
     @Bindable var transactionFormVM: TransactionFormViewModel
     @State private var buttonTapCount: Int = 0
+    
+    var transactions: [Transaction]
     
     var body: some View {
         VStack {
@@ -54,17 +55,6 @@ struct TransactionTab: View {
                 }
         }
         .padding()
-        .onAppear {
-            if transactionListVM.currentMonthTransactions.isEmpty {
-                transactionListVM.getTransactionsByMonth(transactions: transactions)
-            }
-        }
-        .onChange(of: transactionListVM.currentDate) {
-            transactionListVM.getTransactionsByMonth(transactions: transactions)
-        }
-        .onChange(of: transactions) {
-            transactionListVM.getTransactionsByMonth(transactions: transactions)
-        }
     }
 }
 
@@ -99,6 +89,6 @@ struct SearchFilterRowView: View {
 }
 
 #Preview {
-    TransactionTab(transactionListVM: TransactionListViewModel(), transactionFormVM: TransactionFormViewModel())
+    TransactionTab(transactionListVM: TransactionListViewModel(), transactionFormVM: TransactionFormViewModel(), transactions: [])
         .modelContainer(.preview)
 }

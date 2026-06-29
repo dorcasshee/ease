@@ -10,7 +10,7 @@ import SwiftData
 
 @Model
 final class SubCategory {
-    var id: String = ""
+    @Attribute(.unique) var id: String = ""
     var name: String
     var iconName: String
     var isSystemIcon: Bool
@@ -21,7 +21,7 @@ final class SubCategory {
         return parent?.transactionType ?? .expense
     }
     
-    @Relationship(deleteRule: .deny, inverse: \Transaction.category) var transactions: [Transaction] = []
+    @Relationship(deleteRule: .cascade, inverse: \Transaction.category) var transactions: [Transaction] = []
     
     init(id: String, name: String, iconName: String, isSystemIcon: Bool, isDefault: Bool, colorName: String? = nil, parent: ParentCategory) {
         self.id = id

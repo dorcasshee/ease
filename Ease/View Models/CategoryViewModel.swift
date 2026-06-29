@@ -22,6 +22,7 @@ import SwiftData
     
     // UI state
     var showSheet: Bool = false
+    var showEditSheet: Bool = false
     var showError: Bool = false
     var error: AppError? = nil
     

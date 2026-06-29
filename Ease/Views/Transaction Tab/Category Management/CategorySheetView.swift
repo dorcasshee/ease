@@ -15,6 +15,7 @@ struct CategorySheetView: View {
     @Query private var parents: [ParentCategory]
     
     @State private var categoryVM = CategoryViewModel()
+    @State private var path = NavigationPath()
     var transactionFormVM: TransactionFormViewModel
     
     private var sortedParents: [ParentCategory] {
@@ -22,7 +23,7 @@ struct CategorySheetView: View {
     }
     
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             DismissButton()
             
             HStack {
@@ -32,7 +33,8 @@ struct CategorySheetView: View {
                 Spacer()
                 
                 Button {
-                    
+                    categoryVM.showEditSheet = true
+                    path.append("create")
                 } label: {
                     Image(systemName: "plus")
                         .font(.title)
@@ -41,7 +43,8 @@ struct CategorySheetView: View {
                 .padding(.trailing, 5)
                 
                 Button {
-                    
+                    categoryVM.showEditSheet = true
+                    path.append("edit")
                 } label: {
                     Image(systemName: "pencil")
                         .font(.title)
@@ -90,6 +93,11 @@ struct CategorySheetView: View {
             .scrollBounceBehavior(.basedOnSize)
         }
         .padding()
+        .navigationDestination(for: String.self) { destination in
+            if destination == "edit" {
+                EditCategoryView()
+            }
+        }
     }
 }
 
@@ -109,6 +117,7 @@ struct SubCategoryGridView: View {
     let columns: [GridItem] = Array(repeating: GridItem(.flexible()), count: 4)
     
     var body: some View {
+        let _ = print(parent.subCategories.map { "\($0.name): '\($0.id)'" })
         LazyVGrid(columns: columns) {
             ForEach(categoryVM.sortedSubCategories(parent: parent)) { sub in
                 Button {
@@ -144,15 +153,13 @@ struct CategoryHeaderView: View {
                             Image(systemName: iconName)
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: 24, height: 24)
                         } else {
                             Image(iconName)
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: 30, height: 30)
                         }
                     }
-                    .frame(width: 26, alignment: .center)
+                    .frame(width: 26, height: 26)
                     
                     Text(name)
                         .font(.title3)
@@ -229,20 +236,18 @@ struct CategoryIconView: View {
                 .frame(width: 50, height: 50)
                 .foregroundStyle(color)
             
-            if isSystemIcon {
-                Image(systemName: SymbolNameResolver.resolve(imageName))
-                    .font(.title3.bold())
-                    .foregroundStyle(.white)
-                    .fixedSize()
-            } else {
-                Image(imageName)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 32, height: 32)
-                    .foregroundStyle(.white)
-                    .fixedSize()
+            Group {
+                if isSystemIcon {
+                    Image(systemName: SymbolNameResolver.resolve(imageName))
+                        .font(.system(size: 24))
+                } else {
+                    Image(imageName)
+                        .resizable()
+                        .scaledToFit()
+                }
             }
-            
+            .frame(width: 30, height: 30)
+            .foregroundStyle(.white)
         }
     }
 }

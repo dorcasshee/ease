@@ -16,6 +16,7 @@ import SwiftData
     // state
     var currentDate: Date
     var currentMonthTransactions: [Transaction] = []
+    var showSheet: Bool = false
     
     // computed properties
     var transactionSections: [TransactionSection] {
@@ -60,6 +61,7 @@ import SwiftData
         let currentMonthExpenses = currentMonthTransactions.filter { $0.category.transactionType == .expense }
         return Dictionary(grouping: currentMonthExpenses, by: \.category)
             .map { (category: $0, total: $1.reduce(0) { $0 + $1.amount }) }
+            .sorted { $0.total != $1.total ? $0.total > $1.total : $0.category.id < $1.category.id }
     }
     
     // init
@@ -102,6 +104,15 @@ import SwiftData
         if let newDate = Calendar.current.date(byAdding: .month, value: -1, to: currentDate) {
             currentDate = newDate
         }
+    }
+    
+    func getTopXExpensesForThisMonth(x: Int) -> [Transaction] {
+        let currentMonthExpenses = currentMonthTransactions.filter { $0.category.transactionType == .expense }
+        return Array(currentMonthExpenses.sorted { $0.amount > $1.amount }.prefix(x))
+    }
+
+    func getTopXExpenseCategoriesForThisMonth(x: Int) -> [(category: SubCategory, total: Double)] {
+        return Array(expenseTrsnsByCategory.prefix(x))
     }
 }
 

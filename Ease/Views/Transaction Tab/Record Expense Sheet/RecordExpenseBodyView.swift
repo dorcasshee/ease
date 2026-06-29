@@ -45,7 +45,7 @@ struct RecordExpenseBodyView: View {
                                     .frame(width: 24, height: 24)
                             }
                         }
-                        .foregroundStyle(.eOrange)
+                        .foregroundStyle(category.transactionType == .expense ? .eOrange : .ePink)
                     }
                     
                     Spacer()

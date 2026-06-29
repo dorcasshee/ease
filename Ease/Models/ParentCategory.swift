@@ -10,7 +10,7 @@ import SwiftData
 
 @Model
 final class ParentCategory {
-    var id: String = ""
+    @Attribute(.unique) var id: String = ""
     var name: String
     var iconName: String
     var isSystemIcon: Bool
