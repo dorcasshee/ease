@@ -55,17 +55,28 @@ class SwiftDataCategoryService: CategoryRepository {
     }
     
     func getMostFrequentCategories(context: ModelContext, limit: Int = 8, transactionType: TransactionType) throws -> [SubCategory] {
-        let descriptor = FetchDescriptor<SubCategory>(predicate: #Predicate { $0.parent?.transactionType == transactionType })
+        let descriptor = FetchDescriptor<SubCategory>()
         let subCategories = try context.fetch(descriptor)
-        
-        return subCategories.sorted {
-            if $0.transactions.count == $1.transactions.count {
-                return $0.name < $1.name
-            }
-            return $0.transactions.count > $1.transactions.count
+
+        let cutoffDate = Calendar.current.date(byAdding: .month, value: -3, to: Date()) ?? .distantPast
+        let minRecentTransactions = 3
+
+        func recentTransactionCount(_ subCategory: SubCategory) -> Int {
+            subCategory.transactions.filter { $0.date >= cutoffDate }.count
         }
-        .prefix(limit)
-        .map { $0 }
+
+        return subCategories
+            .filter { $0.transactionType == transactionType }
+            .map { ($0, recentTransactionCount($0)) }
+            .filter { $0.1 >= minRecentTransactions }
+            .sorted {
+                if $0.1 == $1.1 {
+                    return $0.0.name < $1.0.name
+                }
+                return $0.1 > $1.1
+            }
+            .prefix(limit)
+            .map { $0.0 }
     }
     
     func getDefaultCategory(context: ModelContext, for type: TransactionType) throws -> SubCategory {

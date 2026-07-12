@@ -12,16 +12,22 @@ import UIKit
 
 struct CategorySheetView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var context
     @Query private var parents: [ParentCategory]
-    
+
     @State private var categoryVM = CategoryViewModel()
     @State private var path = NavigationPath()
+    @AppStorage("collapsedCategorySections") private var collapsedSectionsRaw: String = ""
     var transactionFormVM: TransactionFormViewModel
-    
+
     private var sortedParents: [ParentCategory] {
         categoryVM.sortParentCategories(parents: parents, type: transactionFormVM.transactionType)
     }
-    
+
+    private var allSectionIDs: [String] {
+        (categoryVM.mostFrequentSections.isEmpty ? [] : ["mostFrequent"]) + sortedParents.map(\.id)
+    }
+
     var body: some View {
         NavigationStack(path: $path) {
             DismissButton()
@@ -53,13 +59,13 @@ struct CategorySheetView: View {
                 .padding(.trailing, 5)
                 
                 Button {
-                    if categoryVM.isAllCollapsed(parentCount: sortedParents.count) {
+                    if categoryVM.isAllCollapsed(parentCount: allSectionIDs.count) {
                         categoryVM.collapsedSections.removeAll();
                     } else {
-                        categoryVM.collapsedSections = Set(sortedParents.map(\.id))
+                        categoryVM.collapsedSections = Set(allSectionIDs)
                     }
                 } label: {
-                    Label("\(categoryVM.isAllCollapsed(parentCount: sortedParents.count) ? "Expand" : "Collapse") All", systemImage: categoryVM.isAllCollapsed(parentCount: sortedParents.count) ? "plus" : "minus" )
+                    Label("\(categoryVM.isAllCollapsed(parentCount: allSectionIDs.count) ? "Expand" : "Collapse") All", systemImage: categoryVM.isAllCollapsed(parentCount: allSectionIDs.count) ? "plus" : "minus" )
                         .foregroundStyle(.eIvory)
                         .font(.caption.bold())
                         .padding(.vertical, 5)
@@ -73,10 +79,25 @@ struct CategorySheetView: View {
             
             ScrollView {
                 LazyVStack(pinnedViews: [.sectionHeaders]){
+                    if !categoryVM.mostFrequentSections.isEmpty {
+                        Section {
+                            if !categoryVM.collapsedSections.contains("mostFrequent") {
+                                SubCategoryGridView(categoryVM: categoryVM, transactionFormVM: transactionFormVM, categories: categoryVM.mostFrequentSections)
+                            }
+                        } header: {
+                            Button {
+                                categoryVM.toggleSection(parentID: "mostFrequent")
+                            } label: {
+                                CategoryHeaderView(categoryVM: categoryVM, name: "Most Frequently Used", iconName: "star", count: categoryVM.mostFrequentSections.count, isSystemIcon: true, parentID: "mostFrequent")
+                            }
+                        }
+                        .padding(.bottom, 10)
+                    }
+
                     ForEach(sortedParents) { parent in
                         Section {
                             if !categoryVM.collapsedSections.contains(parent.id) {
-                                SubCategoryGridView(categoryVM: categoryVM, transactionFormVM: transactionFormVM, parent: parent)
+                                SubCategoryGridView(categoryVM: categoryVM, transactionFormVM: transactionFormVM, categories: categoryVM.sortedSubCategories(parent: parent))
                             }
                         } header: {
                             Button {
@@ -93,6 +114,15 @@ struct CategorySheetView: View {
             .scrollBounceBehavior(.basedOnSize)
         }
         .padding()
+        .task(id: transactionFormVM.transactionType) {
+            categoryVM.mostFrequentSections = categoryVM.getMostFrequentCategories(context: context, transactionType: transactionFormVM.transactionType)
+        }
+        .onAppear {
+            categoryVM.collapsedSections = Set(collapsedSectionsRaw.split(separator: ",").map(String.init))
+        }
+        .onChange(of: categoryVM.collapsedSections) { _, newValue in
+            collapsedSectionsRaw = newValue.joined(separator: ",")
+        }
         .navigationDestination(for: String.self) { destination in
             if destination == "edit" {
                 EditCategoryView()
@@ -112,14 +142,13 @@ struct SubCategoryGridView: View {
     
     var categoryVM: CategoryViewModel
     var transactionFormVM: TransactionFormViewModel
-    var parent: ParentCategory
-    
+    var categories: [SubCategory]
+
     let columns: [GridItem] = Array(repeating: GridItem(.flexible()), count: 4)
-    
+
     var body: some View {
-        let _ = print(parent.subCategories.map { "\($0.name): '\($0.id)'" })
         LazyVGrid(columns: columns) {
-            ForEach(categoryVM.sortedSubCategories(parent: parent)) { sub in
+            ForEach(categories) { sub in
                 Button {
                     buttonTapCount += 1
                     transactionFormVM.selectedCategories[transactionFormVM.transactionType] = sub

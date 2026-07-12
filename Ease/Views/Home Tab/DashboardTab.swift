@@ -207,8 +207,6 @@ struct Top5ExpenseTransactionsView: View {
                         .frame(width: 30, height: 30)
                         .foregroundStyle(Color(trsn.category.colorName))
                         
-//                        CategoryIconView(imageName: trsn.category.iconName, color: Color(trsn.category.colorName), isSystemIcon: trsn.category.isSystemIcon)
-                        
                         VStack(alignment: .leading, spacing: 0) {
                             Text(trsn.desc ?? trsn.category.name)
                                 .multilineTextAlignment(.leading)

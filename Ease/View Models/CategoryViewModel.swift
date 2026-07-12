@@ -12,6 +12,7 @@ import SwiftData
     // repositories
     var categoryRepository: CategoryRepository
     
+    // variables
     var name: String?
     var iconName: String?
     var isDefault: Bool = false
@@ -19,6 +20,7 @@ import SwiftData
     var colorName: String?
     var transactionType: TransactionType = .expense
     var collapsedSections: Set<String> = []
+    var mostFrequentSections: [SubCategory] = []
     
     // UI state
     var showSheet: Bool = false
@@ -47,7 +49,7 @@ import SwiftData
             .sorted(by: { $0.name < $1.name })
     }
     
-    func getMostFrequentCategories(context: ModelContext, limit: Int = 8, transactionType: TransactionType) throws -> [SubCategory] {
+    func getMostFrequentCategories(context: ModelContext, limit: Int = 8, transactionType: TransactionType) -> [SubCategory] {
         do {
             return try categoryRepository.getMostFrequentCategories(context: context, limit: limit, transactionType: transactionType)
         } catch {
