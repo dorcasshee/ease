@@ -67,10 +67,12 @@ import SwiftData
 
                 editingTrsn.amount = amount
                 editingTrsn.category = category
+                editingTrsn.transactionType = transactionType
                 editingTrsn.desc = desc.isEmpty ? nil : desc
                 editingTrsn.payee = payee
                 editingTrsn.date = date
                 editingTrsn.isRecurring = isRecurring
+                editingTrsn.needsReview = false
 
                 try transactionRepository.saveTransaction(context: context)
                 
@@ -78,7 +80,7 @@ import SwiftData
                     payeeRepository.deletePayeeIfOrphaned(id: oldPayeeID, context: context)
                 }
             } else {
-                try transactionRepository.createTransaction(amount: amount, category: category, desc: desc.isEmpty ? nil : desc, payee: payee, date: date, isRecurring: isRecurring, context: context)
+                try transactionRepository.createTransaction(amount: amount, category: category, transactionType: transactionType, desc: desc.isEmpty ? nil : desc, payee: payee, date: date, isRecurring: isRecurring, context: context)
             }
 
             return true

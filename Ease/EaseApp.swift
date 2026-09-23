@@ -19,7 +19,7 @@ struct EaseApp: App {
                 case .success(let container):
                     Task {
                         let seeder = DataSeeder(modelContainer: container)
-                        
+
                         do {
                             try await seeder.seedDefaultCategories()
                         } catch {
@@ -92,6 +92,7 @@ extension ModelContainer {
             let salaryTransaction = Transaction(
                 amount: 5000.00,
                 category: salary,
+                transactionType: .income,
                 desc: "January salary",
                 payee: nil,
                 date: calendar.date(from: DateComponents(year: 2026, month: 1, day: 1)) ?? Date()
@@ -110,6 +111,7 @@ extension ModelContainer {
             let groceriesTransaction = Transaction(
                 amount: 87.50,
                 category: groceries,
+                transactionType: .expense,
                 desc: "Weekly groceries",
                 payee: fairprice,
                 date: calendar.date(from: DateComponents(year: 2026, month: 1, day: 15)) ?? Date()
@@ -128,6 +130,7 @@ extension ModelContainer {
             let coffeeTransaction = Transaction(
                 amount: 12.80,
                 category: drinks,
+                transactionType: .expense,
                 desc: "Morning coffee",
                 payee: starbucks,
                 date: calendar.date(from: DateComponents(year: 2026, month: 1, day: 20)) ?? Date()
@@ -146,6 +149,7 @@ extension ModelContainer {
             let gamingTransaction = Transaction(
                 amount: 69.90,
                 category: gaming,
+                transactionType: .expense,
                 desc: "New game on Steam",
                 payee: nil,
                 date: calendar.date(from: DateComponents(year: 2026, month: 1, day: 10)) ?? Date()
@@ -164,6 +168,7 @@ extension ModelContainer {
             let haircutTransaction = Transaction(
                 amount: 35.00,
                 category: toiletries,
+                transactionType: .expense,
                 desc: "Monthly haircut",
                 payee: nil,
                 date: calendar.date(from: DateComponents(year: 2026, month: 1, day: 15, hour: 17, minute: 30)) ?? Date()

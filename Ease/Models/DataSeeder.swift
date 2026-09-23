@@ -11,7 +11,7 @@ import SwiftData
 @ModelActor
 actor DataSeeder {
     private let seedVersionKey = "CategorySeedVersion"
-    private let latestCategorySeedVersion = 4
+    private let latestCategorySeedVersion = 5
 
     func seedDefaultCategories() throws {
         var currentVersion = UserDefaults.standard.integer(forKey: seedVersionKey)
@@ -33,6 +33,8 @@ actor DataSeeder {
                 try migrateV2ToV3()
             case 3:
                 try migrateV3ToV4()
+            case 4:
+                try migrateV4ToV5()
             default:
                 return
             }
@@ -66,6 +68,17 @@ actor DataSeeder {
             }
         }
 
+        try modelContext.save()
+    }
+
+    private func migrateV4ToV5() throws {
+        // transactionType used to be derived from category.transactionType — backfill
+        // the new stored field from that same source for any transactions created
+        // before this field existed.
+        let transactions = try modelContext.fetch(FetchDescriptor<Transaction>())
+        for transaction in transactions {
+            transaction.transactionType = transaction.category.transactionType
+        }
         try modelContext.save()
     }
 
