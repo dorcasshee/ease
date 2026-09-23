@@ -153,6 +153,28 @@
         ]
     },
     {
+        "id": "pcat.expense.uncategorized",
+        "name": "Uncategorised",
+        "iconName": "questionmark.circle",
+        "isSystemIcon": true,
+        "transactionType": "expense",
+        "colorName": "eBlack",
+        "subCategories": [
+            { "id": "scat.expense.uncategorized.uncategorized", "name": "Uncategorised", "iconName": "questionmark.circle", "isSystemIcon": true, "isDefault": false }
+        ]
+    },
+    {
+        "id": "pcat.income.uncategorized",
+        "name": "Uncategorised",
+        "iconName": "questionmark.circle",
+        "isSystemIcon": true,
+        "transactionType": "income",
+        "colorName": "eBlack",
+        "subCategories": [
+            { "id": "scat.income.uncategorized.uncategorized", "name": "Uncategorised", "iconName": "questionmark.circle", "isSystemIcon": true, "isDefault": false }
+        ]
+    },
+    {
         "id": "pcat.income.income",
         "name": "Income",
         "iconName": "custom_dollar_bag",

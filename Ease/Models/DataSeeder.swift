@@ -11,7 +11,7 @@ import SwiftData
 @ModelActor
 actor DataSeeder {
     private let seedVersionKey = "CategorySeedVersion"
-    private let latestCategorySeedVersion = 2
+    private let latestCategorySeedVersion = 4
 
     func seedDefaultCategories() throws {
         var currentVersion = UserDefaults.standard.integer(forKey: seedVersionKey)
@@ -29,6 +29,10 @@ actor DataSeeder {
                 try migrateV0ToV1()
             case 1:
                 try migrateV1ToV2()
+            case 2:
+                try migrateV2ToV3()
+            case 3:
+                try migrateV3ToV4()
             default:
                 return
             }
@@ -65,6 +69,49 @@ actor DataSeeder {
         try modelContext.save()
     }
 
+    private func migrateV3ToV4() throws {
+        // Renames the expense "Uncategorized" sentinel to "Uncategorised" (spelling
+        // consistency with the income sentinel added below), and adds the income
+        // equivalent — categories are partitioned by transactionType, so
+        // "Uncategorized" only ever existed for expense; LogIncomeIntent needs its
+        // own type-specific sentinel to default hands-free income transactions to.
+        let expenseUncategorizedID = "pcat.expense.uncategorized"
+        let expenseUncategorizedSubID = "scat.expense.uncategorized.uncategorized"
+
+        let parentDescriptor = FetchDescriptor<ParentCategory>(predicate: #Predicate { $0.id == expenseUncategorizedID })
+        if let expenseParent = try modelContext.fetch(parentDescriptor).first {
+            expenseParent.name = "Uncategorised"
+        }
+
+        let subDescriptor = FetchDescriptor<SubCategory>(predicate: #Predicate { $0.id == expenseUncategorizedSubID })
+        if let expenseSub = try modelContext.fetch(subDescriptor).first {
+            expenseSub.name = "Uncategorised"
+        }
+
+        let incomeUncategorizedID = "pcat.income.uncategorized"
+        let incomeDescriptor = FetchDescriptor<ParentCategory>(predicate: #Predicate { $0.id == incomeUncategorizedID })
+        guard try modelContext.fetchCount(incomeDescriptor) == 0 else { return }
+
+        let incomeParent = ParentCategory(id: incomeUncategorizedID,
+                                           name: "Uncategorised",
+                                           iconName: "questionmark.circle",
+                                           isSystemIcon: true,
+                                           colorName: "eBlack",
+                                           transactionType: .income)
+        modelContext.insert(incomeParent)
+
+        let incomeSub = SubCategory(id: "scat.income.uncategorized.uncategorized",
+                                     name: "Uncategorised",
+                                     iconName: "questionmark.circle",
+                                     isSystemIcon: true,
+                                     isDefault: false,
+                                     colorName: "eBlack",
+                                     parent: incomeParent)
+        modelContext.insert(incomeSub)
+
+        try modelContext.save()
+    }
+
     private func migrateV1ToV2() throws {
         // Convert known iOS 26-only SF Symbols to asset-backed icons for iOS 18 compatibility.
         let parentDescriptor = FetchDescriptor<ParentCategory>()
@@ -83,6 +130,33 @@ actor DataSeeder {
                 continue
             }
         }
+
+        try modelContext.save()
+    }
+
+    private func migrateV2ToV3() throws {
+        // Adds the "Uncategorized" catch-all category, used for transactions
+        // logged hands-free (e.g. via the Shortcuts/Apple Wallet intent) that need review.
+        let uncategorizedID = "pcat.expense.uncategorized"
+        let descriptor = FetchDescriptor<ParentCategory>(predicate: #Predicate { $0.id == uncategorizedID })
+        guard try modelContext.fetchCount(descriptor) == 0 else { return }
+
+        let parent = ParentCategory(id: uncategorizedID,
+                                    name: "Uncategorized",
+                                    iconName: "questionmark.circle",
+                                    isSystemIcon: true,
+                                    colorName: "eBlack",
+                                    transactionType: .expense)
+        modelContext.insert(parent)
+
+        let sub = SubCategory(id: "scat.expense.uncategorized.uncategorized",
+                              name: "Uncategorized",
+                              iconName: "questionmark.circle",
+                              isSystemIcon: true,
+                              isDefault: false,
+                              colorName: "eBlack",
+                              parent: parent)
+        modelContext.insert(sub)
 
         try modelContext.save()
     }
