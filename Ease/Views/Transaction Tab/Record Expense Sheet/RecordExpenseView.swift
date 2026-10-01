@@ -95,12 +95,18 @@ struct RecordExpenseView: View {
                         buttonTapCount += 1
                         focusedField = nil
                     } label: {
-                        Image(systemName: "checkmark.circle.fill")
-                            .resizable()
-                            .scaledToFit()
-                            .foregroundStyle(.eBlack)
-                            .frame(width: 36)
-                            .padding()
+                        ZStack {
+                            Circle()
+                                .foregroundStyle(.eWhite)
+                                .frame(width: 36)
+                            
+                            Image(systemName: "checkmark.circle.fill")
+                                .resizable()
+                                .scaledToFit()
+                                .foregroundStyle(.eBlack)
+                                .frame(width: 36)
+                                .padding()
+                        }
                     }
                 }
                 .sensoryFeedback(.selection, trigger: buttonTapCount)

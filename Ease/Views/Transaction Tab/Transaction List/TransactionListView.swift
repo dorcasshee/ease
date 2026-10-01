@@ -47,7 +47,7 @@ struct TransactionListView: View {
                             } label: {
                                 Label("Duplicate", systemImage: "document.on.document")
                             }
-                            .tint(.accent)
+                            .tint(.eSmartBlue)
                         }
                     }
                 } header: {
